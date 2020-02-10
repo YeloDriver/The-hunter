@@ -1,2 +1,2 @@
-Hello world \n
+Hello world  
 This is Huang Hui
