@@ -1,0 +1,21 @@
+<!-- templates/home.html -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8/">
+    <title> The hunt </title>
+  </head>
+  <body>
+    Welcome to the hunt !<br>
+    <br>
+    
+    {% if user.is_authenticated %}
+      Hi {{ user.username }} <br>
+      <p> You can start playing by selecting a lobby <a href="http://127.0.0.1:8000/chat"> here </a></p>
+    {% else %}
+      <p> You need to login to play</p> <br>
+      <a href="http://127.0.0.1:8000/accounts/login">login</a>
+    {% endif %}
+  </body>
+</html>
+    
