@@ -1,5 +1,6 @@
 from django.shortcuts import render
 
+
 def index(request):
     return render(request, 'chat/index.htlm')
 
@@ -8,3 +9,5 @@ def room(request, room_name):
         'room_name': room_name
     })
 # Create your views here.
+
+
