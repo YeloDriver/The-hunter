@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">The Hunter</string>
+    <string name="latitude">latitude:</string>
 </resources>
