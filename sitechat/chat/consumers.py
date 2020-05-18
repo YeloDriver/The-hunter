@@ -3,6 +3,13 @@ from channels.generic.websocket import WebsocketConsumer
 from asgiref.sync import async_to_sync
 from django.contrib.auth.models import Group
 
+from channels_presence.models import Room 
+
+from channels.layers import get_channel_layer
+from channels_presence.signals import presence_changed
+
+channel_layer = get_channel_layer()
+
 class ChatConsumer(WebsocketConsumer):
     def connect(self):
         #print("DEBUG : connection")
@@ -23,8 +30,16 @@ class ChatConsumer(WebsocketConsumer):
             self.room_group_name,
             self.channel_name
         )
-
+        self.room = Room.objects.add(self.room_group_name, self.channel_name, self.user)
+        print("Status update")
+        num = 0
+        for user in self.room.get_users():
+            num += 1
+            print(user.username + " is connected to chat room " + self.room_group_name)
+        print(str(num) + " players in chat room" + self.room_group_name)
+        print("List : ")
         self.accept()
+
 
     def disconnect(self, close_code):
         # Leave room group
@@ -32,6 +47,13 @@ class ChatConsumer(WebsocketConsumer):
             self.room_group_name,
             self.channel_name
         )
+        Room.objects.remove(self.room_group_name, self.channel_name)
+        print("Status update")
+        num = 0
+        for user in self.room.get_users():
+            num += 1
+            print(user.username + " is connected to chat room " + self.room_group_name)
+        print(str(num) + " players in chat room" + self.room_group_name)
 
     # Receive message from WebSocket
     def receive(self, text_data):

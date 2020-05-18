@@ -20,10 +20,13 @@ from django.views.generic.base import TemplateView
 
 from accounts.views import login_view, register_view, logout_view
 
+from . import views
+
 urlpatterns = [
     path('', TemplateView.as_view(template_name='home.html'), name='The Hunt'),
     path('admin/', admin.site.urls),
     path('chat/', include('chat.urls')),
+    path('rooms/', views.rooms , name='Rooms'),
     path('accounts/', include('django.contrib.auth.urls')),
     path('accounts/login/', login_view),
     path('accounts/register/', register_view),
