@@ -136,3 +136,63 @@ class ChatConsumer(WebsocketConsumer):
             'type': msg_type,
         }))
 
+
+
+
+
+class PlayConsumer(WebsocketConsumer):
+    def connect(self):
+        #print("DEBUG : connection")
+        self.room_name = self.scope['url_route']['kwargs']['room_name']
+        self.room_group_name = 'chat_%s' % self.room_name
+        self.user = self.scope["user"]
+         
+        # Join room group
+        async_to_sync(self.channel_layer.group_add)(
+            self.room_group_name,
+            self.channel_name
+        )
+
+        self.accept()
+
+    def disconnect(self, close_code):
+        # Leave room group
+        async_to_sync(self.channel_layer.group_discard)(
+            self.room_group_name,
+            self.channel_name
+        )
+
+    # Receive message from WebSocket
+    def receive(self, text_data):
+        print("DEBUG : msg receive")
+
+        text_data_json = json.loads(text_data)
+        msg_type = text_data_json.get('type')
+        msg_user = self.scope["user"].username
+        msg_lat = text_data_json.get('lat')
+        msg_lng = text_data_json.get('lng')
+        async_to_sync(self.channel_layer.group_send)(
+            self.room_group_name,
+            {   
+                'type': msg_type,
+                'user': msg_user,
+                'lat': msg_lat,
+                'lng': msg_lng
+            }
+        )
+
+        
+
+    def position_message(self, event):
+        msg_type = event['type']
+        msg_user = event['user']
+        msg_lat = event['lat']
+        msg_lng = event['lng']
+        self.send(text_data=json.dumps({
+            'type': msg_type,
+            'user': msg_user,
+            'lat': msg_lat,
+            'lng': msg_lng
+        }))
+        print("DEBUG : position Message envoyé au groupe")
+
