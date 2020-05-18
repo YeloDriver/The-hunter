@@ -129,4 +129,10 @@ class ChatConsumer(WebsocketConsumer):
             'hunter_list':hunter,
             'hunted_list': hunted
         }))
+    
+    def start_message(self, event):
+        msg_type = event['type']
+        self.send(text_data=json.dumps({
+            'type': msg_type,
+        }))
 

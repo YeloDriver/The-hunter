@@ -8,12 +8,14 @@
 <body>
     {% if user.is_authenticated %}
         <textarea id="chat-log" cols="100" rows="20"></textarea><br>
- 	<textarea id="Hunter" cols="20" rows="5"></textarea><br>
+ 	      <textarea id="Hunter" cols="20" rows="5"></textarea><br>
         <textarea id="Hunted" cols="20" rows="5"></textarea><br>
         <input id="chat-message-input" type="text" size="100"><br>
         <input id="chat-message-submit" type="button" value="Send">
-	<input id="hunter-button" type="button" value="Hunter">
+	      <input id="hunter-button" type="button" value="Hunter">
         <input id="hunted-button" type="button" value="Hunted">
+        <input id="start-button" type="button" value="Start the game">
+
         {{ room_name|json_script:"room-name" }}
         <script>
             const roomName = JSON.parse(document.getElementById('room-name').textContent);
@@ -29,19 +31,23 @@
             chatSocket.onmessage = function(e) {
                 const data = JSON.parse(e.data);
                 switch(data.type){
-                case "chat.message":
-                    document.querySelector('#chat-log').value += (data.user + " : " + data.text + '\n');
-                    break
-                case "role.update":
-                    document.querySelector('#Hunter').value = ('');
-                    for (var u in data.hunter_list){
-                        document.querySelector('#Hunter').value += (data.hunter_list[u] + '\n');
-                    }
-                    document.querySelector('#Hunted').value = ('');
-                    for (var u in data.hunted_list){
-                        document.querySelector('#Hunted').value += (data.hunted_list[u] + '\n');
-                    }
-                    break
+                    case "chat.message":
+                        document.querySelector('#chat-log').value += (data.user + " : " + data.text + '\n');
+                        break
+                    case "role.update":
+                        document.querySelector('#Hunter').value = ('');
+                        for (var u in data.hunter_list){
+                            document.querySelector('#Hunter').value += (data.hunter_list[u] + '\n');
+                        }
+                        document.querySelector('#Hunted').value = ('');
+                        for (var u in data.hunted_list){
+                            document.querySelector('#Hunted').value += (data.hunted_list[u] + '\n');
+                        }
+                        break
+                    case "start.message":
+                        window.location.href = window.location.href + 'play';
+                        break
+                
                 }
             };
 
@@ -79,13 +85,20 @@
                 }
                 chatSocket.send(JSON.stringify(msg));
             }
-       	
+       	    
+            document.querySelector('#start-button').onclick = function(e){
+                var msg = {
+                  'type': "start.message"
+                }
+                chatSocket.send(JSON.stringify(msg));
+            }
+
             
         </script>
         
         <br>
         <a href="http://127.0.0.1:8000/accounts/logout">logout</a>
-	<button onclick="window.location.href = window.location.href + 'play';">Start the game</button>
+        <!-- <button onclick="window.location.href = window.location.href + 'play';">Start the game</button>  -->
 
   {% else %}
       <p> You need to be logged in to play</p> <br>
