@@ -175,8 +175,15 @@ class PlayConsumer(WebsocketConsumer):
             self.channel_name
         )
 
+        grp_hunter = Group.objects.get(name='hunter_'+self.room_name)
+        grp_hunted = Group.objects.get(name='hunted_'+self.room_name)
+        self.hunted=[]
+        for u in grp_hunted.user_set.all():
+            self.hunted.append(u.username)
+        self.hunter=[]
+        for u in grp_hunter.user_set.all():
+            self.hunter.append(u.username)
         self.accept()
-
 
     def disconnect(self, close_code):
         # Leave room group
@@ -211,14 +218,10 @@ class PlayConsumer(WebsocketConsumer):
         msg_user = event['user']
         msg_lat = event['lat']
         msg_lng = event['lng']
-        
-        grp_hunter = Group.objects.get(name='hunter_'+self.room_name)
-        grp_hunted = Group.objects.get(name='hunted_'+self.room_name)
-        if self.user.groups.filter(name="hunter_"+self.room_name):
+        if  msg_user in self.hunter: 
             role = 'hunter'
         else:
             role = 'hunted'
-
         self.send(text_data=json.dumps({
             'type': msg_type,
             'user': msg_user,
