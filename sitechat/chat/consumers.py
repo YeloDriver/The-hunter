@@ -1,4 +1,6 @@
 import json
+import time
+
 from channels.generic.websocket import WebsocketConsumer
 from asgiref.sync import async_to_sync
 from django.contrib.auth.models import Group
@@ -38,6 +40,7 @@ class ChatConsumer(WebsocketConsumer):
             print(user.username + " is connected to chat room " + self.room_group_name)
         print(str(num) + " players in chat room" + self.room_group_name)
         print("List : ")
+
         self.accept()
 
 
@@ -175,7 +178,7 @@ class PlayConsumer(WebsocketConsumer):
             self.channel_name
         )
 
-        grp_hunter = Group.objects.get(name='hunter_'+self.room_name)
+        grp_hunter = Group.objects.get(name='hunter_'+self.room_name)    #create a local copy of hunter and hunted
         grp_hunted = Group.objects.get(name='hunted_'+self.room_name)
         self.hunted=[]
         for u in grp_hunted.user_set.all():
@@ -183,6 +186,10 @@ class PlayConsumer(WebsocketConsumer):
         self.hunter=[]
         for u in grp_hunter.user_set.all():
             self.hunter.append(u.username)
+        
+        self.timestart = time.time()
+        self.gamelength = 1800 #réglable pour ajuster longueur partie, en s (1800=30min)
+
         self.accept()
 
     def disconnect(self, close_code):
@@ -195,24 +202,34 @@ class PlayConsumer(WebsocketConsumer):
     # Receive message from WebSocket
     def receive(self, text_data):
         print("DEBUG : msg receive")
-
+        
         text_data_json = json.loads(text_data)
         msg_type = text_data_json.get('type')
         msg_user = self.scope["user"].username
-        msg_lat = text_data_json.get('lat')
-        msg_lng = text_data_json.get('lng')
-        async_to_sync(self.channel_layer.group_send)(
-            self.room_group_name,
-            {   
-                'type': msg_type,
-                'user': msg_user,
-                'lat': msg_lat,
-                'lng': msg_lng
-            }
-        )
-
         
+        if time.time() - self.timestart > self.gamelength:
+            msg_type = 'timeout.message'
 
+        if msg_type == 'position.message':
+            msg_lat = text_data_json.get('lat')
+            msg_lng = text_data_json.get('lng')
+            async_to_sync(self.channel_layer.group_send)(
+                self.room_group_name,
+                {   
+                    'type': msg_type,
+                    'user': msg_user,
+                    'lat': msg_lat,
+                    'lng': msg_lng
+                }
+            )
+        else :
+            async_to_sync(self.channel_layer.group_send)(
+                self.room_group_name,
+                {   
+                    'type': msg_type,
+                }
+            )
+           
     def position_message(self, event):
         msg_type = event['type']
         msg_user = event['user']
@@ -229,5 +246,11 @@ class PlayConsumer(WebsocketConsumer):
             'lng': msg_lng,
             'role': role
         }))
-        print("DEBUG : position Message envoyé au groupe")
+        print("DEBUG : position envoyé au groupe")
 
+    def timeout_message(self,event):
+        msg_type = event['type']
+        self.send(text_data=json.dumps({
+            'type': msg_type,
+        }))
+        print("DEBUG : timeout envoyé au groupe")
