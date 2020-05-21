@@ -177,6 +177,7 @@ class PlayConsumer(WebsocketConsumer):
 
         self.accept()
 
+
     def disconnect(self, close_code):
         # Leave room group
         async_to_sync(self.channel_layer.group_discard)(
@@ -210,11 +211,20 @@ class PlayConsumer(WebsocketConsumer):
         msg_user = event['user']
         msg_lat = event['lat']
         msg_lng = event['lng']
+        
+        grp_hunter = Group.objects.get(name='hunter_'+self.room_name)
+        grp_hunted = Group.objects.get(name='hunted_'+self.room_name)
+        if self.user.groups.filter(name="hunter_"+self.room_name):
+            role = 'hunter'
+        else:
+            role = 'hunted'
+
         self.send(text_data=json.dumps({
             'type': msg_type,
             'user': msg_user,
             'lat': msg_lat,
-            'lng': msg_lng
+            'lng': msg_lng,
+            'role': role
         }))
         print("DEBUG : position Message envoyé au groupe")
 

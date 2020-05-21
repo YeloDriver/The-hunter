@@ -24,17 +24,19 @@
     {{ room_name|json_script:"room-name" }}
     <script>
  
-      // Note: This example requires that you consent to location sharing when
-      // prompted by your browser. If you see the error "The Geolocation service
-      // failed.", it means you probably did not give permission for the browser to
-      // locate you.
       var map, infoWindow;
+      var icon_fusil = 'http://icons.iconarchive.com/icons/iconsmind/outline/48/Gun-icon.png';
+      var icon_target = 'http://icons.iconarchive.com/icons/iconsmind/outline/48/Target-icon.png';
+
       function initMap() {
         map = new google.maps.Map(document.getElementById('map'), {
           center: {lat: 45.750000, lng: 4.850000},
           zoom: 6
         });
+        
         infoWindow = new google.maps.InfoWindow;
+        infoWindow.setPosition(map.getCenter());
+        //infoWindow.open(map);
 
       	const roomName = JSON.parse(document.getElementById('room-name').textContent);
       	const playSocket = new WebSocket(
@@ -44,7 +46,7 @@
                 + roomName
                 + '/play/'
         );
-      
+
       	playSocket.onmessage = function(e){
             const data = JSON.parse(e.data);
             switch(data.type){
@@ -54,18 +56,32 @@
                       lng: data.lng
                     };
                     var user_pos = data.user;
-                    infoWindow.setPosition(pos);
-                    infoWindow.open(map);
                     map.setCenter(pos);
-	            var marker = new google.maps.Marker({
-			    position: pos,
-			    map: map,
-			    title: user_pos
-		    });
+                    if (data.role == 'hunter'){
+                        var marker = new google.maps.Marker({
+                          position: pos,
+                          map: map,
+                          icon: icon_fusil,
+                          tittle: user_pos
+                        });
+                    } else {
+                        var marker = new google.maps.Marker({
+                          position: pos,
+                          map: map,
+                          icon: icon_target,
+                          tittle: user_pos
+                        });
+                    }
+
             }
         }
 
-
+        /*var targetMarker = new google.maps.Marker({
+          position: {lat:45.75, lng:4.85},
+          map:map,
+          icon:icon_target,
+          title: 'test'
+        });*/
         // Try HTML5 geolocation.
         if (navigator.geolocation) {
           navigator.geolocation.watchPosition(function(position) {
