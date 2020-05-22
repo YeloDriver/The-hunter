@@ -27,6 +27,7 @@
       var map, infoWindow;
       var icon_fusil = 'http://icons.iconarchive.com/icons/iconsmind/outline/48/Gun-icon.png';
       var icon_target = 'http://icons.iconarchive.com/icons/iconsmind/outline/48/Target-icon.png';
+      var userlist = [];
 
       function initMap() {
         map = new google.maps.Map(document.getElementById('map'), {
@@ -36,7 +37,69 @@
         
         infoWindow = new google.maps.InfoWindow;
         infoWindow.setPosition(map.getCenter());
-        //infoWindow.open(map);
+      
+        var  m0 = new google.maps.Marker({
+                            position: {lat:0, lng:0},
+                            map: map,
+                            icon: icon_target,
+                            title: 'unk'
+                        });
+
+        var  m1 = new google.maps.Marker({
+                            position: {lat:0, lng:0},
+                            map: map,
+                            icon: icon_target,
+                            title: 'unk'
+                        });
+        var  m2 = new google.maps.Marker({
+                            position: {lat:0, lng:0},
+                            map: map,
+                            icon: icon_target,
+                            title: 'unk'
+                        });
+        var  m3 = new google.maps.Marker({
+                            position: {lat:0, lng:0},
+                            map: map,
+                            icon: icon_target,
+                            title: 'unk'
+                        });
+        var  m4 = new google.maps.Marker({
+                            position: {lat:0, lng:0},
+                            map: map,
+                            icon: icon_target,
+                            title: 'unk'
+                        });
+        var  m5 = new google.maps.Marker({
+                            position: {lat:0, lng:0},
+                            map: map,
+                            icon: icon_target,
+                            title: 'unk'
+                        });
+        var  m6 = new google.maps.Marker({
+                            position: {lat:0, lng:0},
+                            map: map,
+                            icon: icon_target,
+                            title: 'unk'
+                        });
+        var  m7 = new google.maps.Marker({
+                            position: {lat:0, lng:0},
+                            map: map,
+                            icon: icon_target,
+                            title: 'unk'
+                        });
+        var  m8 = new google.maps.Marker({
+                            position: {lat:0, lng:0},
+                            map: map,
+                            icon: icon_target,
+                            title: 'unk'
+                        });
+        var  m9 = new google.maps.Marker({
+                            position: {lat:0, lng:0},
+                            map: map,
+                            icon: icon_target,
+                            title: 'unk'
+                        });
+
 
       	const roomName = JSON.parse(document.getElementById('room-name').textContent);
       	const playSocket = new WebSocket(
@@ -49,6 +112,7 @@
 
       	playSocket.onmessage = function(e){
             const data = JSON.parse(e.data);
+            console.log(data.type);
             switch(data.type){
                 case "position.message":
                     var pos = {
@@ -57,29 +121,142 @@
                     };
                     var user_pos = data.user;
                     map.setCenter(pos);
-                    if (data.role == 'hunter'){
-                        var marker = new google.maps.Marker({
+                    /*var marker = new google.maps.Marker({
                           position: pos,
                           map: map,
                           icon: icon_fusil,
-                          tittle: user_pos
+                          title: user_pos
                         });
+
+                    if (data.role == 'hunter'){
+                          marker.setIcon(icon_fusil);
                     } else {
-                        var marker = new google.maps.Marker({
-                          position: pos,
-                          map: map,
-                          icon: icon_target,
-                          tittle: user_pos
-                        });
+                          marker.setIcon(icon_target);
+                    }*/
+                    console.log(userlist);
+                    console.log(data.user);
+                    console.log(userlist.indexOf(data.user));
+                    switch(userlist.indexOf(data.user)){
+                        case 0:
+                            m0.setPosition(pos);
+                            m0.setTitle(user_pos);
+                            if (data.role == 'hunter'){
+                                m0.setIcon(icon_fusil);
+                            } else {
+                                m0.setIcon(icon_target);
+                            }          
+                            break;
+                        case 1:
+                            m1.setPosition(pos);
+                            m1.setTitle(user_pos);
+                            if (data.role == 'hunter'){
+                                m1.setIcon(icon_fusil);
+                            } else {
+                                m1.setIcon(icon_target);
+                            }                             
+                            break;
+                        case 2:
+                            m2.setPosition(pos);
+                            m2.setTitle(user_pos);
+                            if (data.role == 'hunter'){
+                                m2.setIcon(icon_fusil);
+                            } else {
+                                m2.setIcon(icon_target);
+                            }  
+                            break;
+                        case 3:
+                            m3.setPosition(pos);
+                            m3.setTitle(user_pos);
+                            if (data.role == 'hunter'){
+                                m3.setIcon(icon_fusil);
+                            } else {
+                                m3.setIcon(icon_target);
+                            }  
+                            break;
+                        case 4:
+                            m4.setPosition(pos);
+                            m4.setTitle(user_pos);
+                            if (data.role == 'hunter'){
+                                m4.setIcon(icon_fusil);
+                            } else {
+                                m4.setIcon(icon_target);
+                            }  
+                            break;
+                        case 5:
+                            m5.setPosition(pos);
+                            m5.setTitle(user_pos);
+                            if (data.role == 'hunter'){
+                                m5.setIcon(icon_fusil);
+                            } else {
+                                m5.setIcon(icon_target);
+                            }  
+                            break;
+                        case 6:
+                            m6.setPosition(pos);
+                            m6.setTitle(user_pos);
+                            if (data.role == 'hunter'){
+                                m6.setIcon(icon_fusil);
+                            } else {
+                                m6.setIcon(icon_target);
+                            }  
+                            break;
+                        case 7:
+                            m7.setPosition(pos);
+                            m7.setTitle(user_pos);
+                            if (data.role == 'hunter'){
+                                m7.setIcon(icon_fusil);
+                            } else {
+                                m7.setIcon(icon_target);
+                            }  
+                            break; 
+                        case 8:
+                            m8.setPosition(pos);
+                            m8.setTitle(user_pos);
+                            if (data.role == 'hunter'){
+                                m8.setIcon(icon_fusil);
+                            } else {
+                                m8.setIcon(icon_target);
+                            }  
+                            break;
+                        case 9:
+                            m9.setPosition(pos);
+                            m9.setTitle(user_pos);
+                            if (data.role == 'hunter'){
+                                m9.setIcon(icon_fusil);
+                            } else {
+                                m9.setIcon(icon_target);
+                            }  
+                            break;
                     }
+                    break;
+              
+              case "userlist.message":
+                    var i = 0;
+                    var k = 'marker';
+                    for (var u in data.userlist){
+                        userlist.push(data.userlist[u]);
+                        /*var  m = new google.maps.Marker({
+                            position: map.getCenter(),
+                            map: map,
+                            icon: icon_target,
+                            title: user_pos
+                        });
+                        eval('var ' + k + i + ' =' + m + ';');
+                        i++;*/                   
+                    }
+                    console.log(userlist);
+                    break;
+
                 case "timeout.message":
                     infoWindow.setContent("Timeout, game is over !");
                     infoWindow.open(map);
-
+                    break;
+               
             }
         }
 
         // Try HTML5 geolocation.
+        console.log(navigator.geolocation);
         if (navigator.geolocation) {
           navigator.geolocation.watchPosition(function(position) {
             var pos = {
@@ -94,10 +271,10 @@
             }
             playSocket.send(JSON.stringify(msg));
             
-            var msg = {
+           /* var msg = {
               'type': "timeout.message",
             }
-            playSocket.send(JSON.stringify(msg));
+            playSocket.send(JSON.stringify(msg));*/
 
           }, function() {
             handleLocationError(true, infoWindow, map.getCenter());

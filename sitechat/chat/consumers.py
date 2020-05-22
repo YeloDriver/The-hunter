@@ -108,7 +108,8 @@ class ChatConsumer(WebsocketConsumer):
         self.user.groups.add(grp_hunter)
         if self.user.groups.filter(name="hunted_"+self.room_name):
             self.user.groups.remove(grp_hunted)
-
+        
+        #print("DEBUG : role update : "+self.scope["user"].username+" -> Hunter")
         hunted=[]
         for u in grp_hunted.user_set.all():
             hunted.append(u.username)
@@ -119,7 +120,7 @@ class ChatConsumer(WebsocketConsumer):
             hunter.append(u.username)
         #hunter.append("test")
         #print("hunter : "+ str(hunter))
-
+        #print("\n")
 
         msg_type = 'role.update' 
         self.send(text_data=json.dumps({
@@ -136,17 +137,19 @@ class ChatConsumer(WebsocketConsumer):
         self.user.groups.add(grp_hunted)
         if self.user.groups.filter(name="hunter_"+self.room_name):
             self.user.groups.remove(grp_hunter)
+
+        #print("DEBUG : role update : "+self.scope["user"].username+" -> Hunter")
         
         hunted=[]
         for u in grp_hunted.user_set.all():
             hunted.append(u.username)
-        #print("hunted : "+ str(hunted))
+        print("hunted : "+ str(hunted))
 
         hunter=[]
         for u in grp_hunter.user_set.all():
             hunter.append(u.username)
         #print("hunter : "+ str(hunter))
-
+        #print("\n")
 
         msg_type = 'role.update'
         self.send(text_data=json.dumps({
@@ -189,6 +192,25 @@ class PlayConsumer(WebsocketConsumer):
         
         self.timestart = time.time()
         self.gamelength = 1800 #réglable pour ajuster longueur partie, en s (1800=30min)
+
+        self.room = Room.objects.add(self.room_group_name, self.channel_name, self.user)        #list all the users in the room and print them and send them to the group
+        print("Status update")
+        num = 0
+        userlist = []
+        for user in self.room.get_users():
+            num += 1
+            userlist.append(user.username)
+            print(user.username + " is connected to chat room " + self.room_group_name)
+        print(str(num) + " players in chat room" + self.room_group_name)
+        print("List : ")
+        async_to_sync(self.channel_layer.group_send)(
+                self.room_group_name,
+                {   
+                    'type': "userlist.message",
+                    'userlist': userlist
+                }
+            )
+
 
         self.accept()
 
@@ -254,3 +276,13 @@ class PlayConsumer(WebsocketConsumer):
             'type': msg_type,
         }))
         print("DEBUG : timeout envoyé au groupe")
+
+    def userlist_message(self,event):
+        msg_type = event['type']
+        msg_userlist = event['userlist']
+        self.send(text_data=json.dumps({
+            'type': msg_type,
+            'userlist': msg_userlist
+        }))
+        print("DEBUG : userlist envoyé au groupe")
+
