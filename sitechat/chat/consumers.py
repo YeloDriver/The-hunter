@@ -1,4 +1,6 @@
 import json
+import time
+
 from channels.generic.websocket import WebsocketConsumer
 from asgiref.sync import async_to_sync
 from django.contrib.auth.models import Group
@@ -38,6 +40,7 @@ class ChatConsumer(WebsocketConsumer):
             print(user.username + " is connected to chat room " + self.room_group_name)
         print(str(num) + " players in chat room" + self.room_group_name)
         print("List : ")
+
         self.accept()
 
 
@@ -105,7 +108,8 @@ class ChatConsumer(WebsocketConsumer):
         self.user.groups.add(grp_hunter)
         if self.user.groups.filter(name="hunted_"+self.room_name):
             self.user.groups.remove(grp_hunted)
-
+        
+        #print("DEBUG : role update : "+self.scope["user"].username+" -> Hunter")
         hunted=[]
         for u in grp_hunted.user_set.all():
             hunted.append(u.username)
@@ -116,7 +120,7 @@ class ChatConsumer(WebsocketConsumer):
             hunter.append(u.username)
         #hunter.append("test")
         #print("hunter : "+ str(hunter))
-
+        #print("\n")
 
         msg_type = 'role.update' 
         self.send(text_data=json.dumps({
@@ -133,17 +137,19 @@ class ChatConsumer(WebsocketConsumer):
         self.user.groups.add(grp_hunted)
         if self.user.groups.filter(name="hunter_"+self.room_name):
             self.user.groups.remove(grp_hunter)
+
+        #print("DEBUG : role update : "+self.scope["user"].username+" -> Hunter")
         
         hunted=[]
         for u in grp_hunted.user_set.all():
             hunted.append(u.username)
-        #print("hunted : "+ str(hunted))
+        print("hunted : "+ str(hunted))
 
         hunter=[]
         for u in grp_hunter.user_set.all():
             hunter.append(u.username)
         #print("hunter : "+ str(hunter))
-
+        #print("\n")
 
         msg_type = 'role.update'
         self.send(text_data=json.dumps({
@@ -175,7 +181,31 @@ class PlayConsumer(WebsocketConsumer):
             self.channel_name
         )
 
-        self.accept() 
+        grp_hunter = Group.objects.get(name='hunter_'+self.room_name)    #create a local copy of hunter and hunted
+        grp_hunted = Group.objects.get(name='hunted_'+self.room_name)
+        self.hunted=[]
+        for u in grp_hunted.user_set.all():
+            self.hunted.append(u.username)
+        self.hunter=[]
+        for u in grp_hunter.user_set.all():
+            self.hunter.append(u.username)
+        
+        self.timestart = time.time()
+        self.gamelength = 1800 #réglable pour ajuster longueur partie, en s (1800=30min)
+
+        self.room = Room.objects.add(self.room_group_name, self.channel_name, self.user)        #list all the users in the room and print them and send them to the group
+        print("Status update")
+        num = 0
+        userlist = []
+        for user in self.room.get_users():
+            num += 1
+            userlist.append(user.username)
+            print(user.username + " is connected to chat room " + self.room_group_name)
+        print(str(num) + " players in chat room" + self.room_group_name)
+        print("List : ")
+
+        self.accept()
+
     def disconnect(self, close_code):
         # Leave room group
         async_to_sync(self.channel_layer.group_discard)(
@@ -186,10 +216,14 @@ class PlayConsumer(WebsocketConsumer):
     # Receive message from WebSocket
     def receive(self, text_data):
         print("DEBUG : msg receive")
-
+        
         text_data_json = json.loads(text_data)
         msg_type = text_data_json.get('type')
         msg_user = self.scope["user"].username
+        
+        if time.time() - self.timestart > self.gamelength:
+            msg_type = 'timeout.message'
+
         if msg_type == 'position.message':
             msg_lat = text_data_json.get('lat')
             msg_lng = text_data_json.get('lng')
@@ -214,18 +248,32 @@ class PlayConsumer(WebsocketConsumer):
                         'user': users
                     }   
             ) 
+           
     def position_message(self, event):
         msg_type = event['type']
         msg_user = event['user']
         msg_lat = event['lat']
         msg_lng = event['lng']
+        if  msg_user in self.hunter: 
+            role = 'hunter'
+        else:
+            role = 'hunted'
         self.send(text_data=json.dumps({
             'type': msg_type,
             'user': msg_user,
             'lat': msg_lat,
-            'lng': msg_lng
+            'lng': msg_lng,
+            'role': role
         }))
-        print("DEBUG : position Message envoyé au groupe")
+        print("DEBUG : position envoyé au groupe")
+
+    def timeout_message(self,event):
+        msg_type = event['type']
+        self.send(text_data=json.dumps({
+            'type': msg_type,
+        }))
+        print("DEBUG : timeout envoyé au groupe")
+
 
     def liste_message(self, event):
         msg_type = event['type']

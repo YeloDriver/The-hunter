@@ -24,19 +24,21 @@
     {{ room_name|json_script:"room-name" }}
     <script>
  
-      // Note: This example requires that you consent to location sharing when
-      // prompted by your browser. If you see the error "The Geolocation service
-      // failed.", it means you probably did not give permission for the browser to
-      // locate you.
       var map, infoWindow;
       var variables = {};
+      var icon_fusil = 'http://icons.iconarchive.com/icons/iconsmind/outline/48/Gun-icon.png';
+      var icon_target = 'http://icons.iconarchive.com/icons/iconsmind/outline/48/Target-icon.png';
+      var userList = [];
+
       function initMap() {
         map = new google.maps.Map(document.getElementById('map'), {
           center: {lat: 45.750000, lng: 4.850000},
           zoom: 6
         });
+        
         infoWindow = new google.maps.InfoWindow;
-
+        infoWindow.setPosition(map.getCenter());
+        
       	const roomName = JSON.parse(document.getElementById('room-name').textContent);
       	const playSocket = new WebSocket(
                 'ws://'
@@ -45,9 +47,10 @@
                 + roomName
                 + '/play/'
         );
-	var readyState = playSocket.readyState;
+
       	playSocket.onmessage = function(e){
             const data = JSON.parse(e.data);
+            console.log(data);
             switch(data.type){
                 case "position.message":
                     var pos = {
@@ -57,7 +60,11 @@
                     var user_pos = data.user;
 	            variables[data.user].setPosition(pos);
 	            variables[data.user].setMap(map);
-	            console.log(variables);
+		    if (data.role == 'hunter') {
+			    variables[data.user].setIcon(icon_fusil);
+		    } else {
+			    variables[data.user].setIcon(icon_target);
+		    }
 		case "liste_message":
 	            for (let i=0; i<data.user.length; i++) {
 			    variables[data.user[i]] = new google.maps.Marker({
@@ -65,14 +72,20 @@
 				    title: data.user[i]
 			    });
 	            }
+                case "timeout.message":
+                    infoWindow.setContent("Timeout, game is over !");
+                    infoWindow.open(map);
+
             }
         }
 	var firstsend = {
 		'type' : "liste.message"
 	}
 	playSocket.onopen = () => playSocket.send(JSON.stringify(firstsend));
+               
 
         // Try HTML5 geolocation.
+        console.log(navigator.geolocation);
         if (navigator.geolocation) {
           navigator.geolocation.watchPosition(function(position) {
             var pos = {
@@ -88,6 +101,11 @@
 	    if (playSocket.readyState == 1) {
 		    playSocket.send(JSON.stringify(msg));
 	    }
+            
+           /* var msg = {         //Message pour tester timeout.message
+              'type': "timeout.message",
+            }
+            playSocket.send(JSON.stringify(msg));*/
 
           }, function() {
             handleLocationError(true, infoWindow, map.getCenter());
