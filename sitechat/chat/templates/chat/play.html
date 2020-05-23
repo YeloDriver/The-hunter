@@ -58,30 +58,32 @@
                       lng: data.lng
                     };
                     var user_pos = data.user;
-	            variables[data.user].setPosition(pos);
-	            variables[data.user].setMap(map);
-		    if (data.role == 'hunter') {
-			    variables[data.user].setIcon(icon_fusil);
-		    } else {
-			    variables[data.user].setIcon(icon_target);
-		    }
-		case "liste_message":
-	            for (let i=0; i<data.user.length; i++) {
-			    variables[data.user[i]] = new google.maps.Marker({
-				    position:{lat: 45.750000, lng: 4.850000},
-				    title: data.user[i]
-			    });
-	            }
+                    variables[data.user].setPosition(pos);
+                    variables[data.user].setMap(map);
+                    if (data.role == 'hunter') {
+                        variables[data.user].setIcon(icon_fusil);
+                    } else {
+                        variables[data.user].setIcon(icon_target);
+                    }
+                    break;
+                case "liste_message":
+                    for (i in data.user) {
+                        variables[data.user[i]] = new google.maps.Marker({
+                            position:{lat: 45.750000, lng: 4.850000},
+                            title: data.user[i]
+                        });
+                    }
+                    break;
                 case "timeout.message":
                     infoWindow.setContent("Timeout, game is over !");
                     infoWindow.open(map);
-
+                    break;
             }
         }
-	var firstsend = {
-		'type' : "liste.message"
-	}
-	playSocket.onopen = () => playSocket.send(JSON.stringify(firstsend));
+        var firstsend = {
+          'type' : "liste.message"
+        }
+        playSocket.onopen = () => playSocket.send(JSON.stringify(firstsend));
                
 
         // Try HTML5 geolocation.
@@ -98,9 +100,9 @@
               'lat': position.coords.latitude,
               'lng': position.coords.longitude
             };
-	    if (playSocket.readyState == 1) {
-		    playSocket.send(JSON.stringify(msg));
-	    }
+            if (playSocket.readyState == 1) {
+              playSocket.send(JSON.stringify(msg));
+            }
             
            /* var msg = {         //Message pour tester timeout.message
               'type': "timeout.message",
