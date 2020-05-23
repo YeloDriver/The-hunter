@@ -175,8 +175,7 @@ class PlayConsumer(WebsocketConsumer):
             self.channel_name
         )
 
-        self.accept()
-
+        self.accept() 
     def disconnect(self, close_code):
         # Leave room group
         async_to_sync(self.channel_layer.group_discard)(
@@ -191,20 +190,30 @@ class PlayConsumer(WebsocketConsumer):
         text_data_json = json.loads(text_data)
         msg_type = text_data_json.get('type')
         msg_user = self.scope["user"].username
-        msg_lat = text_data_json.get('lat')
-        msg_lng = text_data_json.get('lng')
-        async_to_sync(self.channel_layer.group_send)(
-            self.room_group_name,
-            {   
-                'type': msg_type,
-                'user': msg_user,
-                'lat': msg_lat,
-                'lng': msg_lng
-            }
-        )
-
-        
-
+        if msg_type == 'position.message':
+            msg_lat = text_data_json.get('lat')
+            msg_lng = text_data_json.get('lng')
+            async_to_sync(self.channel_layer.group_send)(
+                self.room_group_name,
+                {   
+                    'type': msg_type,
+                    'user': msg_user,
+                    'lat': msg_lat,
+                    'lng': msg_lng
+                }
+            )
+        elif msg_type == 'liste.message' :
+            self.room = Room.objects.add(self.room_group_name, self.channel_name, self.user)
+            users = []
+            for user in self.room.get_users():
+                users.append(user.username)
+            async_to_sync(self.channel_layer.group_send)(
+                    self.room_group_name,
+                    {
+                        'type': 'liste_message',
+                        'user': users
+                    }   
+            ) 
     def position_message(self, event):
         msg_type = event['type']
         msg_user = event['user']
@@ -218,3 +227,11 @@ class PlayConsumer(WebsocketConsumer):
         }))
         print("DEBUG : position Message envoyé au groupe")
 
+    def liste_message(self, event):
+        msg_type = event['type']
+        msg_user = event['user']
+        self.send(text_data=json.dumps({
+            'type': msg_type,
+            'user': msg_user
+        }))
+        print("DEBUG : initialisation markers")
