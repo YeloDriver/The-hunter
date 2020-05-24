@@ -3,7 +3,7 @@ import time
 
 from channels.generic.websocket import WebsocketConsumer
 from asgiref.sync import async_to_sync
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, User
 
 from channels_presence.models import Room 
 
@@ -42,7 +42,6 @@ class ChatConsumer(WebsocketConsumer):
             num += 1
             print(user.username + " is connected to chat room " + self.room_group_name)
         print(str(num) + " players in chat room" + self.room_group_name)
-        print("List : ")
 
         self.accept()
 
@@ -86,6 +85,7 @@ class ChatConsumer(WebsocketConsumer):
                 self.room_group_name,
                 {
                     'type': msg_type,
+                    'user': msg_user
                 }
             )
         #print("DEBUG : msg transmit au groupe")
@@ -104,15 +104,19 @@ class ChatConsumer(WebsocketConsumer):
         }))
 
     def hunter_message(self, event):
+
+        msg_user = event['user']
+        userObject = User.objects.get(username=msg_user)
+
         #print("DEBUG : Message Hunter recu du groupe")
 
         grp_hunter = Group.objects.get(name='hunter_'+self.room_name)
         grp_hunted = Group.objects.get(name='hunted_'+self.room_name)
-        self.user.groups.add(grp_hunter)
-        if self.user.groups.filter(name="hunted_"+self.room_name):
-            self.user.groups.remove(grp_hunted)
+        userObject.groups.add(grp_hunter)
+        if userObject.groups.filter(name="hunted_"+self.room_name):
+            userObject.groups.remove(grp_hunted)
         
-        #print("DEBUG : role update : "+self.scope["user"].username+" -> Hunter")
+        #print("DEBUG : role update : "+userObject.username+" -> Hunter")
         hunted=[]
         for u in grp_hunted.user_set.all():
             hunted.append(u.username)
@@ -121,7 +125,6 @@ class ChatConsumer(WebsocketConsumer):
         hunter=[]
         for u in grp_hunter.user_set.all():
             hunter.append(u.username)
-        #hunter.append("test")
         #print("hunter : "+ str(hunter))
         #print("\n")
 
@@ -133,20 +136,26 @@ class ChatConsumer(WebsocketConsumer):
         }))
         
     def hunted_message(self, event):
+        
         #print("DEBUG : Message Hunted recu du groupe")
+
+        msg_user = event['user']
+        userObject = User.objects.get(username=msg_user)
 
         grp_hunter = Group.objects.get(name='hunter_'+self.room_name)
         grp_hunted = Group.objects.get(name='hunted_'+self.room_name)
-        self.user.groups.add(grp_hunted)
-        if self.user.groups.filter(name="hunter_"+self.room_name):
-            self.user.groups.remove(grp_hunter)
+        userObject.groups.add(grp_hunted)
+        #print("added"+userObject.username+" to grp_hunted")
+        if userObject.groups.filter(name="hunter_"+self.room_name):
+            userObject.groups.remove(grp_hunter)
+            #print("deleted"+userObject.username+"from grp_hunter")
 
-        #print("DEBUG : role update : "+self.scope["user"].username+" -> Hunter")
+        #print("DEBUG : role update : "+userObject.username+" -> Hunted")
         
         hunted=[]
         for u in grp_hunted.user_set.all():
             hunted.append(u.username)
-        print("hunted : "+ str(hunted))
+        #print("hunted : "+ str(hunted))
 
         hunter=[]
         for u in grp_hunter.user_set.all():
@@ -205,7 +214,6 @@ class PlayConsumer(WebsocketConsumer):
             userlist.append(user.username)
             print(user.username + " is connected to chat room " + self.room_group_name)
         print(str(num) + " players in chat room" + self.room_group_name)
-        print("List : ")
 
         self.accept()
 
