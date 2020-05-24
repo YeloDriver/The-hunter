@@ -38,12 +38,11 @@
         
         infoWindow = new google.maps.InfoWindow;
         infoWindow.setPosition(map.getCenter());
-        
       	const roomName = JSON.parse(document.getElementById('room-name').textContent);
       	const playSocket = new WebSocket(
-                'ws://'
+                'wss://'
                 + window.location.host
-                + '/ws/chat/'
+                + '/wss/chat/'
                 + roomName
                 + '/play/'
         );
