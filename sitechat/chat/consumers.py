@@ -238,12 +238,12 @@ class PlayConsumer(WebsocketConsumer):
         if msg_type == 'position.message':
             msg_lat = text_data_json.get('lat')
             msg_lng = text_data_json.get('lng')
-            if msg_user in hunter:
+            """if msg_user in self.hunter:
                 game_data = Game(session = self.room_name, user = msg_user, pos_lat = msg_lat, pos_lng = msg_lng, time = time.time(),team = "hunter")
                 game_data.save()
             else:
                 game_data = Game(session = self.room_name, user = msg_user, pos_lat = msg_lat, pos_lng = msg_lng, time = time.time(),team = "hunted")
-                game_data.save()
+                game_data.save()"""
 		    
             async_to_sync(self.channel_layer.group_send)(
                 self.room_group_name,
@@ -257,32 +257,40 @@ class PlayConsumer(WebsocketConsumer):
         elif msg_type == 'liste.message' :
             self.room = Room.objects.add(self.room_group_name, self.channel_name, self.user)
             users = []
+            role = []
             for user in self.room.get_users():
+                if user.username in self.hunter:
+                    role.append("hunter")
+                else:
+                    role.append("hunted")
                 users.append(user.username)
             
             async_to_sync(self.channel_layer.group_send)(
                     self.room_group_name,
                     {
                         'type': 'liste_message',
-                        'user': users
+                        'user': users,
+                        'role': role
                     }   
             ) 
-           
+        elif msg_type == 'timeout.message': 
+            async_to_sync(self.channel_layer.group_send)(
+                    self.room_group_name,
+                    {
+                        'type': 'liste_message',
+                    }   
+            )  
+
     def position_message(self, event):
         msg_type = event['type']
         msg_user = event['user']
         msg_lat = event['lat']
         msg_lng = event['lng']
-        if  msg_user in self.hunter: 
-            role = 'hunter'
-        else:
-            role = 'hunted'
         self.send(text_data=json.dumps({
             'type': msg_type,
             'user': msg_user,
             'lat': msg_lat,
             'lng': msg_lng,
-            'role': role
         }))
         print("DEBUG : position envoyé au groupe")
 
@@ -297,8 +305,10 @@ class PlayConsumer(WebsocketConsumer):
     def liste_message(self, event):
         msg_type = event['type']
         msg_user = event['user']
+        msg_role = event['role']
         self.send(text_data=json.dumps({
             'type': msg_type,
-            'user': msg_user
+            'user': msg_user,
+            'role': msg_role
         }))
         print("DEBUG : initialisation markers")

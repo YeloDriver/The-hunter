@@ -25,10 +25,13 @@
     <script>
  
       var map, infoWindow;
-      var variables = {};
       var icon_fusil = 'http://icons.iconarchive.com/icons/iconsmind/outline/48/Gun-icon.png';
       var icon_target = 'http://icons.iconarchive.com/icons/iconsmind/outline/48/Target-icon.png';
-      var userList = [];
+      var last_pos = {};
+      var variables = {};
+      var role = {};
+      var dead = []
+
 
       function initMap() {
         map = new google.maps.Map(document.getElementById('map'), {
@@ -40,9 +43,9 @@
         infoWindow.setPosition(map.getCenter());
       	const roomName = JSON.parse(document.getElementById('room-name').textContent);
       	const playSocket = new WebSocket(
-                'wss://'
+                'ws://'
                 + window.location.host
-                + '/wss/chat/'
+                + '/ws/chat/'
                 + roomName
                 + '/play/'
         );
@@ -56,23 +59,44 @@
                       lat: data.lat,
                       lng: data.lng
                     };
-                    var user_pos = data.user;
                     variables[data.user].setPosition(pos);
                     variables[data.user].setMap(map);
-                    if (data.role == 'hunter') {
-                        variables[data.user].setIcon(icon_fusil);
-                    } else {
-                        variables[data.user].setIcon(icon_target);
-                    }
+                    last_pos[data.user]= pos;
+                    /*for (user in last_pos){
+                        if (user != data.user && role[user] != role[data.user]){
+                            var distance = google.maps.geometry.spherical.computeDistanceBetween(pos, last_pos[user]);
+                            if (distance < 20){
+                                if(role[user]=="hunter"){
+                                    infoWindow.setContent(data.user+" has been killed by" + user);
+                                    dead.push(data.user);                                  
+                                }else{
+                                    infoWindow.setContent(user+" has been killed by" + data.user);
+                                    dead.push(user);
+                                }
+                                infoWindow.open(map);
+                            }
+                        }
+                    }*/
                     break;
+
                 case "liste_message":
                     for (i in data.user) {
                         variables[data.user[i]] = new google.maps.Marker({
                             position:{lat: 45.750000, lng: 4.850000},
                             title: data.user[i]
                         });
+                        
+                        if (data.role[i] == 'hunter') {
+                            variables[data.user[i]].setIcon(icon_fusil);
+                        } else {
+                            variables[data.user[i]].setIcon(icon_target);
+                        }
+
+                        last_pos[data.user[i]] = {lat: 45.750000, lng: 4.850000};
+                        role[data.user[i]] = data.role[i];
                     }
                     break;
+
                 case "timeout.message":
                     infoWindow.setContent("Timeout, game is over !");
                     infoWindow.open(map);
@@ -116,7 +140,7 @@
           handleLocationError(false, infoWindow, map.getCenter());
         }
       }
-
+      
       function handleLocationError(browserHasGeolocation, infoWindow, pos) {
         infoWindow.setPosition(pos);
         infoWindow.setContent(browserHasGeolocation ?
