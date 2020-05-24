@@ -6,19 +6,12 @@
     android:orientation="vertical"
     tools:ignore="ExtraText">
 
-    <TextView
-        android:id="@+id/getLocation"
+    <WebView
+        android:id="@+id/webView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="700dp"
-        android:text="@string/latitude" />
+        tools:context=".MainActivity">
 
-
-    <WebView
-        android:id="@+id/webview"
-        android:layout_width="match_parent"
-
-        android:layout_height="650dp">
 
     </WebView>
 
