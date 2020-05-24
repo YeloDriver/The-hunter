@@ -27,6 +27,7 @@
       var map, infoWindow;
       var icon_fusil = 'http://icons.iconarchive.com/icons/iconsmind/outline/48/Gun-icon.png';
       var icon_target = 'http://icons.iconarchive.com/icons/iconsmind/outline/48/Target-icon.png';
+      var icon_dead = 'http://icons.iconarchive.com/icons/icons8/windows-8/48/Healthcare-Skull-icon.png';
       var last_pos = {};
       var variables = {};
       var role = {};
@@ -55,25 +56,29 @@
             console.log(data);
             switch(data.type){
                 case "position.message":
-                    var pos = {
-                      lat: data.lat,
-                      lng: data.lng
-                    };
-                    variables[data.user].setPosition(pos);
-                    variables[data.user].setMap(map);
-                    last_pos[data.user]= pos;
-                    for (user in last_pos){
-                        if (user != data.user && role[user] != role[data.user]){
-                            var distance = google.maps.geometry.spherical.computeDistanceBetween(pos, last_pos[user]);
-                            if (distance < 20){
-                                if(role[user]=="hunter"){
-                                    infoWindow.setContent(data.user+" has been killed by" + user);
-                                    dead.push(data.user);                                  
-                                }else{
-                                    infoWindow.setContent(user+" has been killed by" + data.user);
-                                    dead.push(user);
+                    if (!(data.user in dead)){
+                        var pos = {
+                          lat: data.lat,
+                          lng: data.lng
+                        };
+                        variables[data.user].setPosition(pos);
+                        variables[data.user].setMap(map);
+                        last_pos[data.user]= pos;
+                        for (user in last_pos){
+                            if (user != data.user && role[user] != role[data.user]){
+                                var distance = google.maps.geometry.spherical.computeDistanceBetween(pos, last_pos[user]);
+                                if (distance < 20){
+                                    if(role[user]=="hunter"){
+                                        infoWindow.setContent(data.user+" has been killed by" + user);
+                                        variables[data.user].setIcon(icon_dead);
+                                        dead.push(data.user);                               
+                                    }else{
+                                        infoWindow.setContent(user+" has been killed by" + data.user);
+                                        variables[user].setIcon(icon_dead);
+                                        dead.push(user);
+                                    }
+                                    infoWindow.open(map);
                                 }
-                                infoWindow.open(map);
                             }
                         }
                     }
