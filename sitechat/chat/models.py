@@ -6,3 +6,4 @@ class Game(models.Model):
     pos_lng = models.FloatField()
     pos_lat = models.FloatField()
     time = models.FloatField()
+    team = models.CharField(max_length = 30)

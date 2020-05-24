@@ -238,10 +238,13 @@ class PlayConsumer(WebsocketConsumer):
         if msg_type == 'position.message':
             msg_lat = text_data_json.get('lat')
             msg_lng = text_data_json.get('lng')
-
-            game_data = Game(session = self.room_name, user = msg_user, pos_lat = msg_lat, pos_lng = msg_lng, time = time.time())
-            game_data.save()
-
+	    if msg_user in hunter:
+		    game_data = Game(session = self.room_name, user = msg_user, pos_lat = msg_lat, pos_lng = msg_lng, time = time.time(),team = "hunter")
+		    game_data.save()
+	    else :
+	    	    game_data = Game(session = self.room_name, user = msg_user, pos_lat = msg_lat, pos_lng = msg_lng, time = time.time(),team = "hunted")
+		    game_data.save()
+		    
             async_to_sync(self.channel_layer.group_send)(
                 self.room_group_name,
                 {   
