@@ -1,0 +1,133 @@
+<!-- templates/home.html -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Geolocation</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        height: 100%;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 90%;
+        margin: 1000;
+        padding: 1000;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    {{ room_name|json_script:"room-name" }}
+    <script>
+ 
+      var map, infoWindow;
+      var variables = {};
+      var icon_fusil = 'http://icons.iconarchive.com/icons/iconsmind/outline/48/Gun-icon.png';
+      var icon_target = 'http://icons.iconarchive.com/icons/iconsmind/outline/48/Target-icon.png';
+      var userList = [];
+
+      function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: 45.750000, lng: 4.850000},
+          zoom: 6
+        });
+        
+        infoWindow = new google.maps.InfoWindow;
+        infoWindow.setPosition(map.getCenter());
+        
+      	const roomName = JSON.parse(document.getElementById('room-name').textContent);
+      	const playSocket = new WebSocket(
+                'ws://'
+                + window.location.host
+                + '/ws/chat/'
+                + roomName
+                + '/play/'
+        );
+
+      	playSocket.onmessage = function(e){
+            const data = JSON.parse(e.data);
+            console.log(data);
+            switch(data.type){
+                case "position.message":
+                    var pos = {
+                      lat: data.lat,
+                      lng: data.lng
+                    };
+                    var user_pos = data.user;
+                    variables[data.user].setPosition(pos);
+                    variables[data.user].setMap(map);
+                    if (data.role == 'hunter') {
+                        variables[data.user].setIcon(icon_fusil);
+                    } else {
+                        variables[data.user].setIcon(icon_target);
+                    }
+                    break;
+                case "liste_message":
+                    for (i in data.user) {
+                        variables[data.user[i]] = new google.maps.Marker({
+                            position:{lat: 45.750000, lng: 4.850000},
+                            title: data.user[i]
+                        });
+                    }
+                    break;
+                case "timeout.message":
+                    infoWindow.setContent("Timeout, game is over !");
+                    infoWindow.open(map);
+                    break;
+            }
+        }
+        var firstsend = {
+          'type' : "liste.message"
+        }
+        playSocket.onopen = () => playSocket.send(JSON.stringify(firstsend));
+               
+
+        // Try HTML5 geolocation.
+        console.log(navigator.geolocation);
+        if (navigator.geolocation) {
+          navigator.geolocation.watchPosition(function(position) {
+            var pos = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
+            };
+            
+            var msg = {
+              'type': "position.message",
+              'lat': position.coords.latitude,
+              'lng': position.coords.longitude
+            };
+            if (playSocket.readyState == 1) {
+              playSocket.send(JSON.stringify(msg));
+            }
+            
+           /* var msg = {         //Message pour tester timeout.message
+              'type': "timeout.message",
+            }
+            playSocket.send(JSON.stringify(msg));*/
+
+          }, function() {
+            handleLocationError(true, infoWindow, map.getCenter());
+          });
+        } else {
+          // Browser doesn't support Geolocation
+          handleLocationError(false, infoWindow, map.getCenter());
+        }
+      }
+
+      function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+        infoWindow.setPosition(pos);
+        infoWindow.setContent(browserHasGeolocation ?
+                              'Error: The Geolocation service failed.' :
+                              'Error: Your browser doesn\'t support geolocation.');
+        infoWindow.open(map);
+      }
+    </script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCXhHZv5lo3UGjmkXfRRp-ZMNiUIc1hjIk&callback=initMap">
+    </script>
+  </body>
+</html>
