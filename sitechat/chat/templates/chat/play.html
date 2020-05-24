@@ -62,7 +62,7 @@
                     variables[data.user].setPosition(pos);
                     variables[data.user].setMap(map);
                     last_pos[data.user]= pos;
-                    /*for (user in last_pos){
+                    for (user in last_pos){
                         if (user != data.user && role[user] != role[data.user]){
                             var distance = google.maps.geometry.spherical.computeDistanceBetween(pos, last_pos[user]);
                             if (distance < 20){
@@ -76,7 +76,7 @@
                                 infoWindow.open(map);
                             }
                         }
-                    }*/
+                    }
                     break;
 
                 case "liste_message":
