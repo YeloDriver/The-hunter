@@ -18,13 +18,13 @@
 
         {{ room_name|json_script:"room-name" }}
         <script>
-	    var ws_scheme = window.location.protocol == "https" ? "wss" : "ws";
+	    var wss_scheme = window.location.protocol == "https" ? "ws" : "ws";
             const roomName = JSON.parse(document.getElementById('room-name').textContent);
 
             const chatSocket = new WebSocket(
-                'wss://'
+                'ws://'
                 + window.location.host
-                + '/wss/chat/'
+                + '/ws/chat/'
                 + roomName
                 + '/'
             );
