@@ -21,6 +21,8 @@
   </head>
   <body>
     <div id="map"></div>
+    <input type="hidden" id="self_user" value={{user.username}}>
+
     {{ room_name|json_script:"room-name" }}
     <script>
  
@@ -32,7 +34,10 @@
       var variables = {};
       var role = {};
       var dead = []
-
+      var killDistance = 20;
+      var userCircle;
+      
+      var selfUser = document.getElementById("self_user").value; 
 
       function initMap() {
         var styledMapType = new google.maps.StyledMapType(
@@ -303,9 +308,9 @@
         infoWindow.setPosition(map.getCenter());
       	const roomName = JSON.parse(document.getElementById('room-name').textContent);
       	const playSocket = new WebSocket(
-                'wss://'
+                'ws://'
                 + window.location.host
-                + '/wss/chat/'
+                + '/ws/chat/'
                 + roomName
                 + '/play/'
         );
@@ -315,29 +320,33 @@
             console.log(data);
             switch(data.type){
                 case "position.message":
-		    if (dead.indexOf(data.user)==-1) {
+		                if (dead.indexOf(data.user)==-1) {
                         var pos = new google.maps.LatLng(data.lat, data.lng);
                         variables[data.user].setPosition(pos);
                         variables[data.user].setMap(map);
                         last_pos[data.user]= pos;
+                        if (data.user == selfUser){
+                            map.setCenter(pos);
+                            userCircle.setCenter(pos);
+                        }
                         for (user in last_pos){
                             if (user != data.user && role[user] != role[data.user]){
                                 var distance = google.maps.geometry.spherical.computeDistanceBetween(pos, last_pos[user]);
-				console.log(distance);
-                                if (distance < 1000){
+				                        console.log(distance);
+                                if (distance < killDistance){
                                     if(role[user]=="hunter"){
-					infoWindow.setPosition(pos);
+					                              infoWindow.setPosition(pos);
                                         infoWindow.setContent(data.user+" has been killed by" + user);
                                         variables[data.user].setIcon(icon_dead);
                                         dead.push(data.user);                               
                                     }else{
-					infoWindow.setPosition(pos);
+					                              infoWindow.setPosition(pos);
                                         infoWindow.setContent(user+" has been killed by" + data.user);
                                         variables[user].setIcon(icon_dead);
                                         dead.push(user);
                                     }
                                     infoWindow.open(map);
-				    console.log(dead);
+				                            console.log(dead);
                                 }
                             }
                         }
@@ -359,6 +368,17 @@
 
                         last_pos[data.user[i]] = new google.maps.LatLng(48.75000, 4.850000);
                         role[data.user[i]] = data.role[i];
+
+                        userCircle = new google.maps.Circle({
+                          strokeColor: '#FF0000',
+                          strokeOpacity: 0.8,
+                          strokeWeight: 2,
+                          fillColor: '#FF0000',
+                          fillOpacity: 0.35,
+                          map: map,
+                          center: {lat: 45.750000, lng: 4.850000},
+                          radius: killDistance                   
+                        });
                     }
                     break;
 
