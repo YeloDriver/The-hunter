@@ -3,14 +3,48 @@
 <html>
 <head>
     <meta charset="utf-8"/>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <!-- Popper JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
     <title>Chat Rooms</title>
 </head>
 <body>
+    <nav class="navbar navbar-expand-sm bg-dark navbar-dark sticky-top">
+        <a class="navbar-brand" href="#">Main</a>
+          <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="#">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Useless button 1</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Useless button 2</a>
+          </li>
+        </ul>
+          <ul class="nav navbar-nav navbar-right">
+        <li class="nav-item">
+                  <a class="nav-link" href="https://www.facebook.com"><i class="fab fa-facebook"></i> Facebook</a>
+              </li>
+        <li>
+                  <a class="nav-link" href="https://github.com/Thanhphan1147"><i class="fab fa-github"></i></span> Github</a>
+              </li>
+      </ul>
+    </nav>
+  
    {% if user.is_authenticated %}
 
-      What chat room would you like to enter?<br>
-      <input id="room-name-input" type="text" size="100"><br>
-      <input id="room-name-submit" type="button" value="Enter">
+      <label for="room-name-input">What chat room would you like to enter?</label>
+      <input id="room-name-input" type="text" class="form-control" size="100"><br>
+      <input id="room-name-submit" type="button" class="btn btn-primary" value="Enter">
 
       <script>
           document.querySelector('#room-name-input').focus();
@@ -25,13 +59,19 @@
               window.location.pathname = '/chat/' + roomName + '/';
           };
       </script>
-      <br>
+      <div class="container">
 
-      You are logged in as {{ user.username }}
-      <p><a href="http://127.0.0.1:8000/accounts/logout/">logout</a></p>
-   {% else %}
-      <p>You need to be logged in to select a lobby</p>
-      <a href="http://127.0.0.1:8000/accounts/login">login</a>
-    {% endif %}
+      
+            <div class="alert alert-success">
+                You are logged in as {{ user.username }}
+            </div>
+            <button type="button" class="btn btn-secondary"> <a href="http://127.0.0.1:8000/accounts/logout/">logout</a> </button>
+            {% else %}
+            <div class="alert alert-danger">
+                You need to be logged in to select a lobby
+            </div>
+            <button type="button" class="btn btn-secondary"> <a href="http://127.0.0.1:8000/accounts/login">login</a> </button>
+            {% endif %}
+    </div>
 </body>
 </html>
