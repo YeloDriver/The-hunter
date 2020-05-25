@@ -1,0 +1,67 @@
+/* style="background-image:linear-gradient(to bottom,rgba(0,0,0,0),rgba(0,0,0,0.4)),url('static/thème1.jpg')" */
+#topsection {
+    display: flex;
+    position: fixed;
+    min-height: 20px;
+    background-color: black;
+    background-size: cover;
+    min-width: 100%;
+  
+}
+
+body { margin:0; }
+
+.hunterOrHunted {  
+    background:  url("thème1.jpg") no-repeat center center fixed ;
+    background-size: cover;
+    min-height: 90vh;  
+    overflow: hidden;
+}
+
+.Friends{  
+    background:  url("thème2.png") no-repeat center center fixed ;
+    background-size: cover; 
+    min-height: 100vh;
+    overflow: hidden;  
+   
+}
+.Besta {  
+    background:  url("thème3.jpg") no-repeat center center fixed ;
+    background-size: cover;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+
+
+
+ul {
+  list-style-type: none;
+}
+
+
+
+h1 {
+    color: white;
+    font-size: 60px;
+    text-align: center;
+    margin-left: 50vh;
+}
+
+h3,h2 {
+    color: orange;
+    font-size: 40px;
+    margin-top: 40vh;
+    margin-left: 5vh;
+}
+p {
+    color : blanchedalmond;
+    font-size: 25px;
+    margin-left: 5vh;
+    
+}
+.intro {
+    margin-left: 15vh;
+    color : blue;
+    font-size: 22px;
+}
