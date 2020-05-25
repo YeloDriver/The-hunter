@@ -13,9 +13,9 @@
       }
       /* Optional: Makes the sample page fill the window. */
       html, body {
-        height: 90%;
-        margin: 1000;
-        padding: 1000;
+        height: 100%;
+        margin: 0;
+        padding: 0;
       }
     </style>
   </head>
@@ -37,16 +37,16 @@
       function initMap() {
         map = new google.maps.Map(document.getElementById('map'), {
           center: {lat: 45.750000, lng: 4.850000},
-          zoom: 6
+          zoom: 12
         });
         
         infoWindow = new google.maps.InfoWindow;
         infoWindow.setPosition(map.getCenter());
       	const roomName = JSON.parse(document.getElementById('room-name').textContent);
       	const playSocket = new WebSocket(
-                'ws://'
+                'wss://'
                 + window.location.host
-                + '/ws/chat/'
+                + '/wss/chat/'
                 + roomName
                 + '/play/'
         );
@@ -56,28 +56,29 @@
             console.log(data);
             switch(data.type){
                 case "position.message":
-                    if (!(data.user in dead)){
-                        var pos = {
-                          lat: data.lat,
-                          lng: data.lng
-                        };
+		    if (dead.indexOf(data.user)==-1) {
+                        var pos = new google.maps.LatLng(data.lat, data.lng);
                         variables[data.user].setPosition(pos);
                         variables[data.user].setMap(map);
                         last_pos[data.user]= pos;
                         for (user in last_pos){
                             if (user != data.user && role[user] != role[data.user]){
                                 var distance = google.maps.geometry.spherical.computeDistanceBetween(pos, last_pos[user]);
-                                if (distance < 20){
+				console.log(distance);
+                                if (distance < 1000){
                                     if(role[user]=="hunter"){
+					infoWindow.setPosition(pos);
                                         infoWindow.setContent(data.user+" has been killed by" + user);
                                         variables[data.user].setIcon(icon_dead);
                                         dead.push(data.user);                               
                                     }else{
+					infoWindow.setPosition(pos);
                                         infoWindow.setContent(user+" has been killed by" + data.user);
                                         variables[user].setIcon(icon_dead);
                                         dead.push(user);
                                     }
                                     infoWindow.open(map);
+				    console.log(dead);
                                 }
                             }
                         }
@@ -97,7 +98,7 @@
                             variables[data.user[i]].setIcon(icon_target);
                         }
 
-                        last_pos[data.user[i]] = {lat: 45.750000, lng: 4.850000};
+                        last_pos[data.user[i]] = new google.maps.LatLng(48.75000, 4.850000);
                         role[data.user[i]] = data.role[i];
                     }
                     break;
@@ -155,7 +156,7 @@
       }
     </script>
     <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCXhHZv5lo3UGjmkXfRRp-ZMNiUIc1hjIk&callback=initMap">
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCXhHZv5lo3UGjmkXfRRp-ZMNiUIc1hjIk&callback=initMap&libraries=geometry">
     </script>
   </body>
 </html>
