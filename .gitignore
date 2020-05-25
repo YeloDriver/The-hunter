@@ -1,0 +1,4 @@
+sitechat/db.sqlite3
+sitechat/__pycache__/
+chat/__pycache__/
+accounts/__pycache__/
