@@ -120,7 +120,6 @@ class LocationWebChromeClient extends WebChromeClient {
     }
 
 
-
     @Override
     public void onGeolocationPermissionsShowPrompt(final String origin, final GeolocationPermissions.Callback geolocationPermissionsCallback) {
         this.mOrigin = origin;
@@ -135,18 +134,18 @@ class LocationWebChromeClient extends WebChromeClient {
     }
 
     private void doJudgeLocationServiceEnabled() {
-        //是否开启定位
+        //requesting permission to use your current location
         if (isEnabledLocationFunction()) {
             AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-            builder.setTitle("温馨提示");
-            builder.setMessage(String.format("网站%s，正在请求使用您当前的位置，是否许可？", mOrigin));
-            builder.setPositiveButton("许可", new DialogInterface.OnClickListener() {
+            builder.setTitle("Tips");
+            builder.setMessage(String.format("Website%s，requesting permission to use your current location", mOrigin));
+            builder.setPositiveButton("Allow", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     mGeolocationPermissionsCallback.invoke(mOrigin, true, true);
                 }
             });
-            builder.setNegativeButton("不许可", new DialogInterface.OnClickListener() {
+            builder.setNegativeButton("Not allowed", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     mGeolocationPermissionsCallback.invoke(mOrigin, false, false);
@@ -160,20 +159,20 @@ class LocationWebChromeClient extends WebChromeClient {
     }
 
     /**
-     * 请求开启定位服务
+     * Request to enable location services
      */
     private void requestEnableLocationFunction(final String origin, final GeolocationPermissions.Callback geolocationPermissionsCallback) {
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-        builder.setTitle("温馨提示");
-        builder.setMessage(String.format("网站%s，正在请求使用您当前的位置，是否前往开启定位服务？", origin));
-        builder.setPositiveButton("前往开启", new DialogInterface.OnClickListener() {
+        builder.setTitle("Tips");
+        builder.setMessage(String.format("Website%s，requesting permission to use your current location.", origin));
+        builder.setPositiveButton("Allow", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                 mContext.startActivityForResult(intent, REQUEST_CODE_ENABLE_LOCATION);
             }
         });
-        builder.setNegativeButton("拒绝", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton("Not allowed", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 geolocationPermissionsCallback.invoke(origin, false, false);
@@ -229,21 +228,20 @@ class LocationWebChromeClient extends WebChromeClient {
             mShowRequestPermissionRationale = false;
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-        builder.setTitle("温馨提示");
-        builder.setMessage(String.format("网站%s，正在请求使用您当前的位置，是否许可应用获取当前位置权限？", mOrigin));
-        builder.setPositiveButton(" 是 ", new DialogInterface.OnClickListener() {
+        builder.setTitle("Tips");
+        builder.setMessage(String.format("Website%s，requesting permission to use your current location.", mOrigin));
+        builder.setPositiveButton(" Allow ", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     mContext.requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION},
                             REQUEST_CODE_ACCESS_LOCATION_PERMISSION);
                 } else {
-                    //额，版本低，正常情况下，安装默认许可，然鹅，国产ROM各种魔改，有阔轮提前实现了单独授权
                     doRequestAppSetting();
                 }
             }
         });
-        builder.setNegativeButton(" 否 ", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(" Not allowed ", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 mGeolocationPermissionsCallback.invoke(mOrigin, false, false);

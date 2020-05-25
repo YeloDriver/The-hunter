@@ -4,10 +4,12 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.net.http.SslError;
 import android.os.Build;
 import android.view.KeyEvent;
 import android.os.Bundle;
 import android.view.Window;
+import android.webkit.SslErrorHandler;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -85,10 +87,19 @@ public class MainActivity extends AppCompatActivity {
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 view.loadUrl(url);
                 return true;
+
+            }
+            @Override
+            public void onReceivedSslError(WebView view,
+                                           SslErrorHandler handler, SslError error) {
+                // TODO Auto-generated method stub
+                // handler.cancel();// Android默认的处理方式
+                handler.proceed();// 接受所有网站的证书
+                // handleMessage(Message msg);// 进行其他处理
             }
         });
 
-        mWebView.loadUrl("https://0a6f7c2c.ngrok.io");
+        mWebView.loadUrl("https://ec6a3a58.ngrok.io");
         //mWebView.loadUrl("https://www.google.fr/maps/preview");
     }
 
