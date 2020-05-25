@@ -37,7 +37,8 @@
       var killDistance = 20;
       var userCircle;
       var gameOver = false;
-      
+      var winner = "none";      
+
       var selfUser = document.getElementById("self_user").value; 
 
       function initMap() {
@@ -354,6 +355,8 @@
                                     }
                                     if (alive == false){
                                         gameOver = true;
+                                        winner = "hunter";
+                                        gameEnded(winner);
                                     }
                                 }
                             }
@@ -394,6 +397,8 @@
                     infoWindow.setContent("Timeout, game is over !");
                     infoWindow.open(map);
                     gameOver = true;
+                    winner = "hunted";
+                    gameEnded(winner);
                     break;
             }
         }
@@ -442,6 +447,19 @@
                               'Error: Your browser doesn\'t support geolocation.');
         infoWindow.open(map);
       }
+      
+      function gameEnded(team){
+          //resize map pour la reduire
+          var go = document.createElement("textarea");
+          go.value = "Game Over !";
+          var txt = document.createElement("textarea");
+          txt.value = "Winners : ";
+          for(u in role.filter(role => role == team)){
+              txt.value += u;
+          }
+      }
+
+      
     </script>
     <script async defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCXhHZv5lo3UGjmkXfRRp-ZMNiUIc1hjIk&callback=initMap&libraries=geometry">
