@@ -39,9 +39,7 @@ class SessionFilter(InputFilter):
 class GameAdmin(admin.ModelAdmin):
     list_display =('session','user','pos_lat','pos_lng','time',)
     list_filter = (UserFilter, SessionFilter)
-    ordering = ('time','user',)
-    
-
+    ordering = ('time','user',) 
 
 
 admin.site.register(Room)
