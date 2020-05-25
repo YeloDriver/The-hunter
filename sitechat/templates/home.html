@@ -1,29 +1,89 @@
 <!-- templates/home.html -->
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8/">
-    <title> The hunt </title>
-  </head>
-  <body>
-    Welcome to the hunt !<br>
-    <br>
-    
-    {% if user.is_authenticated %}
-      Hi {{ user.username }} <br>
-      <p> You can start playing by selecting a lobby <a href="http://127.0.0.1:8000/chat"> here </a></p>
-      <br>
-      <a href="http://127.0.0.1:8000/accounts/logout">logout</a>
-      <br>
-      <br>
-      <a href="http://127.0.0.1:8000/rooms">Rooms</a>
-    {% else %}
-      <p> You need to login to play</p> <br>
-      <a href="http://127.0.0.1:8000/accounts/login">login</a>
-      <p> You can register here</p> <br>
-      <a href="http://127.0.0.1:8000/accounts/register">register</a>
+{% load static %}
 
+
+<!DOCTYPE html>
+
+<html>
+
+
+  <head>
+    <link rel="stylesheet"  href="{% static '/style.css' %}">
+  
+      
+    <meta charset="utf-8/">
+   
+    <title> The hunt </title>
+      
+  </head>
+ 
+  <body>
+     <div id="topsection">
+          <header>
+            <h1>The Hunt</h1>
+            
+          </header>
+           <nav>
+            <ul id="menu">
+            {% if user.is_authenticated %}
+                Hi {{ user.username }} <br>
+            
+                <li><a href="http://127.0.0.1:8000/chat"> <p class ="intro">Join a loby</p></a></li>
+               
+                
+                <li><a href="http://127.0.0.1:8000/accounts/logout"><p class ="intro">logout</p></a></li>
+               
+                 <li><a href="http://127.0.0.1:8000/rooms"><p class ="intro">logout</p></a></li>
+                
+            {% else %}
+                
+                <li><a href="http://127.0.0.1:8000/accounts/login"><p class ="intro">login</p></a></li>
+             
+               <li><a href="http://127.0.0.1:8000/accounts/register"><p class ="intro">register</p></a></li>
+               
+            {% endif %}
+            </ul>
+          </nav>
+
+      </div>
+      
+      <div class="mainapge">
+          <section class = "hunterOrHunted" >
+      <h3>Be Hunter or Hunted</h3>
+      <p> You are an expert in camouflage ? You know every secret place in your city? Be hunted and help you teamate to escpape the hunter <br>
+        If you are a trapper, able to detect your prey miles away and a good shooter, Hunter will be your future.
+      </p>
+          </section>
+     
+          <section class = "Friends">
+      <h3>Play with your friends</h3>
+      <p> In the hunter you can create a lobby, inviting your friends in your game, and prepare yourself for a long and hectic hunt.
+      </p>
+        </section>
+          
+          <section class = "Besta">
+      <h3>Join other player in your city</h3>
+      <p> Ready to hide from the best hunter of your city? Wanting to catch the most unattainabler prey? 
+          In the hunter, you can joing a lobby and fight other players in your city.
+      </p>
+          </section>
+         
+          
+      </div>
+      
+      
+      
+      
+<!--   
+      
+    {% if request.user_agent.is_mobile   %}
+      bonjour utilisateur mobile<br>
+  
+    
+     {% else%}
+     <p>bonjour utilisateur web</p> <br>
     {% endif %}
+    
+-->
   </body>
 </html>
-    
