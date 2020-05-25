@@ -15,6 +15,7 @@
 	      <input id="hunter-button" type="button" value="Hunter">
         <input id="hunted-button" type="button" value="Hunted">
         <input id="start-button" type="button" value="Start the game">
+	<input id="clean-button" type="button" value="Clean teams">
 
         {{ room_name|json_script:"room-name" }}
         <script>
@@ -48,7 +49,10 @@
                     case "start.message":
                         window.location.href = window.location.href + 'play';
                         break
-                
+                    case "clean.message":
+			document.querySelector('#Hunter').value = '';
+			document.querySelector('#Hunted').value = '';
+			break
                 }
             };
 
@@ -94,7 +98,13 @@
                 chatSocket.send(JSON.stringify(msg));
             }
 
-            
+            document.querySelector('#clean-button').onclick = function(e){
+		var msg = {
+			'type': "clean.message"
+		}
+		chatSocket.send(JSON.stringify(msg));
+	    }
+
         </script>
         
         <br>
