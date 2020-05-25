@@ -36,6 +36,7 @@
       var dead = []
       var killDistance = 20;
       var userCircle;
+      var gameOver = false;
       
       var selfUser = document.getElementById("self_user").value; 
 
@@ -294,7 +295,7 @@
           {name: 'Styled Map'});
         map = new google.maps.Map(document.getElementById('map'), {
           center: {lat: 45.780000, lng: 4.850000},
-          zoom: 12,
+          zoom: 16,
           mapTypeControlOptions: {
             mapTypeIds: ['roadmap', 'satellite', 'hybrid', 'terrain',
                     'styled_map']
@@ -332,8 +333,7 @@
                         for (user in last_pos){
                             if (user != data.user && role[user] != role[data.user]){
                                 var distance = google.maps.geometry.spherical.computeDistanceBetween(pos, last_pos[user]);
-				                        console.log(distance);
-                                if (distance < killDistance){
+                                if (distance < killDistance){                   //kill function
                                     if(role[user]=="hunter"){
 					                              infoWindow.setPosition(pos);
                                         infoWindow.setContent(data.user+" has been killed by" + user);
@@ -346,7 +346,15 @@
                                         dead.push(user);
                                     }
                                     infoWindow.open(map);
-				                            console.log(dead);
+                                    for (u in role){                                //Check if all the hunted are dead
+                                      var alive = false;
+                                      if(role[u]=="hunted" && dead.indexOf(u) > -1){
+                                          alive = true;
+                                      }
+                                    }
+                                    if (alive == false){
+                                        gameOver = true;
+                                    }
                                 }
                             }
                         }
@@ -385,6 +393,7 @@
                 case "timeout.message":
                     infoWindow.setContent("Timeout, game is over !");
                     infoWindow.open(map);
+                    gameOver = true;
                     break;
             }
         }
@@ -397,29 +406,29 @@
         // Try HTML5 geolocation.
         console.log(navigator.geolocation);
         if (navigator.geolocation) {
-          navigator.geolocation.watchPosition(function(position) {
-            var pos = {
-              lat: position.coords.latitude,
-              lng: position.coords.longitude
-            };
-            
-            var msg = {
-              'type': "position.message",
-              'lat': position.coords.latitude,
-              'lng': position.coords.longitude
-            };
-            if (playSocket.readyState == 1) {
-              playSocket.send(JSON.stringify(msg));
-            }
-            
-           /* var msg = {         //Message pour tester timeout.message
-              'type': "timeout.message",
+            if(dead.indexOf(selfUser) == -1){
+                navigator.geolocation.watchPosition(function(position) {
+                    var pos = {
+                      lat: position.coords.latitude,
+                      lng: position.coords.longitude
+                    };
+                    var msg = {
+                        'type': "position.message",
+                        'lat': position.coords.latitude,
+                        'lng': position.coords.longitude
+                    };
+                    if (playSocket.readyState == 1) {
+                      playSocket.send(JSON.stringify(msg));
+                    }
+                }, function() {
+                    handleLocationError(true, infoWindow, map.getCenter());
+                });
+            } 
+          /*var msg = {         //Message pour tester timeout.message
+                'type': "timeout.message",
             }
             playSocket.send(JSON.stringify(msg));*/
 
-          }, function() {
-            handleLocationError(true, infoWindow, map.getCenter());
-          });
         } else {
           // Browser doesn't support Geolocation
           handleLocationError(false, infoWindow, map.getCenter());
