@@ -28,7 +28,7 @@
             <ul id="menu">
             {% if user.is_authenticated %}
                 <p class ="nom"> Hi {{ user.username }} </p> <br>
-            <br>
+         
                 <li><a href="http://127.0.0.1:8000/chat"> <p class ="intro">Join a loby</p></a></li>
                
                 <br>
@@ -72,7 +72,7 @@
            <nav>
             <ul id="menu">
             {% if user.is_authenticated %}
-                <p class ="nom"> Hi {{ user.username }} </p> <br>
+                <p class ="nom"> Hi {{ user.username }} </p>
             
                 <li><a href="http://127.0.0.1:8000/chat"> <p class ="intro">Join a loby</p></a></li>
                
@@ -111,16 +111,18 @@
       <h3>Join other player in your city</h3>
       <p> Ready to hide from the best hunter of your city? Wanting to catch the most unattainabler prey? 
           In the hunter, you can joing a lobby and fight other players in your city.
-      </p>
-          </section>
          
           
+         
+          </section>
+         
+         
       </div>
       
-      
-        <a href="#">back to top</a>
+    
+        
   
-
+      <a href="#">back to top</a>
   </body>
         {% endif %}
 </html>

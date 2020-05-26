@@ -1,18 +1,19 @@
 body
 {
-   
-  
-
-
-
-    background:  url("thème1.jpg") no-repeat center center fixed ;
+    background:  url("theme1.jpg") no-repeat center center fixed ;
     background-size: cover;
     min-height: 90vh;  
     overflow: hidden;
+    
 }
 
 h1 {
     color: black;
     font-size: 50px;
+    text-align: center;
+}
+
+p {
+
     text-align: center;
 }

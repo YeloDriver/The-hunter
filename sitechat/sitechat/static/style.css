@@ -6,27 +6,29 @@
     background-color: black;
     background-size: cover;
     min-width: 100%;
-  
+    background:  url("theHuntLogo.png") no-repeat left;
+    background-color: black;
+    
 }
 
 body { margin:0; }
 
 .hunterOrHunted {  
-    background:  url("thème1.jpg") no-repeat center center fixed ;
+    background:  url("theme1.jpg") no-repeat center center fixed ;
     background-size: cover;
     min-height: 90vh;  
     overflow: hidden;
 }
 
 .Friends{  
-    background:  url("thème2.png") no-repeat center center fixed ;
+    background:  url("theme2.png") no-repeat center center fixed ;
     background-size: cover; 
     min-height: 100vh;
     overflow: hidden;  
    
 }
 .Besta {  
-    background:  url("thème3.jpg") no-repeat center center fixed ;
+    background:  url("theme3.jpg") no-repeat center center fixed ;
     background-size: cover;
     min-height: 100vh;
     overflow: hidden;
@@ -65,3 +67,9 @@ p {
     color : blue;
     font-size: 22px;
 }
+.nom {
+    margin-left: 15vh;
+    color : blanchedalmond;
+    font-size: 22px;
+}
+
