@@ -38,9 +38,9 @@
             const roomName = JSON.parse(document.getElementById('room-name').textContent);
 
             const chatSocket = new WebSocket(
-                'wss://'
+                'ws://'
                 + window.location.host
-                + '/wss/chat/'
+                + '/ws/chat/'
                 + roomName
                 + '/'
             );
@@ -120,8 +120,12 @@
 		        chatSocket.send(JSON.stringify(msg));
 	        }
             setInterval(function(){
-                socket.send(JSON.stringify("heart_beat"))
-            },30000);
+                var msg ={
+                    'type' : "heart_beat",
+                    'text': 'text'
+                }
+                chatSocket.send(JSON.stringify(msg))
+            },15000);
         </script>
         
         <br>

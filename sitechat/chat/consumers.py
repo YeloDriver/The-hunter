@@ -96,10 +96,15 @@ class ChatConsumer(WebsocketConsumer):
                     'user': msg_user
                 }
             )
-        if text_data == "heart_beat":
+        if msg_type == "heart_beat":
+            print("dcmm")
             Presence.objects.touch(self.channel_name)
         #print("DEBUG : msg transmit au groupe")
-
+        
+    def heart_beat(self, event):
+        msg_type = event['type']
+        msg_user = event['user']
+        Presence.objects.touch(self.channel_name)
 
     def chat_message(self, event):
         #print("DEBUG : chat Message recu du groupe")
