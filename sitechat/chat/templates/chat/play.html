@@ -372,7 +372,7 @@
 			                      arrow.setPath([last_pos[selfUser], arrowcoords]);
 			                  }
                         for (user in last_pos){
-                            if (user != data.user && role[user] != role[data.user]){
+                            if (user != data.user && role[user] != role[data.user] && dead.indexOf(user) == -1){
                                 var distance = google.maps.geometry.spherical.computeDistanceBetween(pos, last_pos[user]);
                                 if (distance < killDistance){                   //kill function
                                     if(role[user]=="hunter"){
@@ -387,9 +387,9 @@
                                         dead.push(user);
                                     }
                                     infoWindow.open(map);
+                                    alive = false;
                                     for (u in role){                                //Check if all the hunted are dead
-                                      var alive = false;
-                                      if(role[u]=="hunted" && dead.indexOf(u) > -1){
+                                      if(role[u]=="hunted" && dead.indexOf(u) == -1){
                                           alive = true;
                                       }
                                     }
@@ -443,8 +443,8 @@
         // Try HTML5 geolocation.
         console.log(navigator.geolocation);
         if (navigator.geolocation) {
-            if(dead.indexOf(selfUser) == -1){
-                navigator.geolocation.watchPosition(function(position) {
+            navigator.geolocation.watchPosition(function(position) {
+                if(dead.indexOf(selfUser) == -1 && gameOver==false){
                     var pos = {
                       lat: position.coords.latitude,
                       lng: position.coords.longitude
@@ -457,10 +457,10 @@
                     if (playSocket.readyState == 1) {
                       playSocket.send(JSON.stringify(msg));
                     }
-                }, function() {
-                    handleLocationError(true, infoWindow, map.getCenter());
-                });
-            } 
+                }
+            }, function() {
+                handleLocationError(true, infoWindow, map.getCenter());
+            });
           /*var msg = {         //Message pour tester timeout.message
                 'type': "timeout.message",
             }
