@@ -4,22 +4,33 @@
 <head>
     <meta charset="utf-8"/>
     <title>Chat Room</title>
+    <style>
+        .intext{
+            margin-top: 15px;
+        }
+    </style>
 </head>
 <body>
     {% if user.is_authenticated %}
+    <div>
         <textarea id="chat-log" cols="100" rows="20"></textarea><br>
+    </div>
+    <div>
         <textarea id="Hunter" cols="20" rows="5"></textarea>
-        <input id="hunter-button" type="button" value="Join">
+        <input id="hunter-button" type="button" value="Join" class="join">
         <br>
         <textarea id="Hunted" cols="20" rows="5"></textarea>
-        <input id="hunted-button" type="button" value="Join">
+        <input id="hunted-button" type="button" value="Join" class="join">
         <br>
+    </div>
+    <div class="intext">
         <input id="chat-message-input" type="text" size="100"><br>
         <input id="chat-message-submit" type="button" value="Send">
 	      
         
         <input id="start-button" type="button" value="Start the game">
-	<input id="clean-button" type="button" value="Clean teams">
+        <input id="clean-button" type="button" value="Clean teams">
+    </div>
 
         {{ room_name|json_script:"room-name" }}
         <script>
