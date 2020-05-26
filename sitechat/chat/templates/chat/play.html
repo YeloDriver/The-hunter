@@ -312,9 +312,9 @@
         infoWindow.setPosition(map.getCenter());
       	const roomName = JSON.parse(document.getElementById('room-name').textContent);
       	const playSocket = new WebSocket(
-                'wss://'
+                'ws://'
                 + window.location.host
-                + '/wss/chat/'
+                + '/ws/chat/'
                 + roomName
                 + '/play/'
         );
@@ -381,12 +381,14 @@
                                     if (alive == false){
                                         gameOver = true;
                                         winner = "hunter";
-                                        gameEnded(winner, role);
+                                        gameEnded();
                                     }
                                 }
                             }
                         }
                     }
+                    winner = "hunted";
+                    gameEnded();
                     break;
                 case "liste_message":
                     for (i in data.user) {
@@ -422,7 +424,7 @@
                     infoWindow.open(map);
                     gameOver = true;
                     winner = "hunted";
-                    gameEnded(winner, role);
+                    gameEnded();
                     break;
             }
         }
@@ -458,6 +460,7 @@
             }
             playSocket.send(JSON.stringify(msg));*/
 
+
         } else {
           // Browser doesn't support Geolocation
           handleLocationError(false, infoWindow, map.getCenter());
@@ -472,14 +475,20 @@
         infoWindow.open(map);
       }
       
-      function gameEnded(team, role){
+      function gameEnded(){
           //resize map pour la reduire
+
+          console.log("game over");
           var go = document.createElement("textarea");
           go.value = "Game Over !";
           var txt = document.createElement("textarea");
           txt.value = "Winners : ";
-          for(u in role.filter(role => role == team)){
-              txt.value += u;
+          console.log("winners :");
+          for(let [u, r] of Object.entries(role)){
+              if(r == winner){ 
+                txt.value += u;
+                console.log(u);
+              }
           }
       }
 
