@@ -13,11 +13,6 @@ body
     overflow: hidden;
 }
 
-p
-{
-    background-color: rgba(30, 30, 30, .5);
-}
-
 
 .intro {
     color: blue;
@@ -31,4 +26,3 @@ p
     color : blanchedalmond;
     font-size: 22px;
 }
-

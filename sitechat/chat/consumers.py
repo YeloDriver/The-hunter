@@ -256,13 +256,14 @@ class PlayConsumer(WebsocketConsumer):
 
     # Receive message from WebSocket
     def receive(self, text_data):
-        print("DEBUG : msg receive")
         Presence.objects.touch(self.channel_name)
         
         text_data_json = json.loads(text_data)
         msg_type = text_data_json.get('type')
         msg_user = self.scope["user"].username
         
+        print("DEBUG : msg receive "+msg_type)
+
         if time.time() - self.timestart > self.gamelength:
             msg_type = 'timeout.message'
 
@@ -323,14 +324,14 @@ class PlayConsumer(WebsocketConsumer):
             'lat': msg_lat,
             'lng': msg_lng,
         }))
-        print("DEBUG : position envoyé au groupe")
+        #print("DEBUG : position envoyé au groupe")
 
     def timeout_message(self,event):
         msg_type = event['type']
         self.send(text_data=json.dumps({
             'type': msg_type,
         }))
-        print("DEBUG : timeout envoyé au groupe")
+        #print("DEBUG : timeout envoyé au groupe")
 
 
     def liste_message(self, event):
@@ -342,4 +343,4 @@ class PlayConsumer(WebsocketConsumer):
             'user': msg_user,
             'role': msg_role
         }))
-        print("DEBUG : initialisation markers")
+        #print("DEBUG : initialisation markers")
