@@ -10,7 +10,7 @@ from channels_presence.models import Room , Presence
 from channels.layers import get_channel_layer
 from channels_presence.signals import presence_changed
 
-from chat.models import Game,ChatRoom,PlayRoom
+from chat.models import Game,ChatRoom,PlayRoom,End
 
 
 channel_layer = get_channel_layer()
@@ -276,13 +276,13 @@ class PlayConsumer(WebsocketConsumer):
         if msg_type == 'position.message':
             msg_lat = text_data_json.get('lat')
             msg_lng = text_data_json.get('lng')
-            '''if msg_user in self.hunter:
+            if msg_user in self.hunter:
                 game_data = Game(session = self.room_name, user = msg_user, pos_lat = msg_lat, pos_lng = msg_lng, time = time.time(),team = "hunter")
                 game_data.save()
             else:
                 game_data = Game(session = self.room_name, user = msg_user, pos_lat = msg_lat, pos_lng = msg_lng, time = time.time(),team = "hunted")
-                game_data.save()'''
-		    
+                game_data.save()
+		   
             async_to_sync(self.channel_layer.group_send)(
                 self.room_group_name,
                 {   
@@ -318,6 +318,10 @@ class PlayConsumer(WebsocketConsumer):
                         'type': msg_type,
                     }   
             )  
+        elif msg_type == 'end.message' :
+            msg_winner = text_data_json.get('list') 
+            end = End(winner =  msg_winner, session= self.room_name)
+            end.save()
 
     def position_message(self, event):
         msg_type = event['type']

@@ -39,7 +39,12 @@
       var gameOver = false;
       var winner = "none";      
       var selfUser = document.getElementById("self_user").value; 
-
+      var playSocket;
+      /*setTimeout(function(){
+          winner = "hunter";
+          gameEnded();
+            
+      },20000)*/
       function initMap() {
         var styledMapType = new google.maps.StyledMapType(
           [
@@ -304,7 +309,7 @@
         //Associate the styled map with the MapTypeId and set it to display.
         map.mapTypes.set('styled_map', styledMapType);
         map.setMapTypeId('styled_map');
-
+  
         var lineSymbol = {          //Arrow to hunted
               path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW
 	      };
@@ -331,7 +336,7 @@
       infoWindow = new google.maps.InfoWindow;
         infoWindow.setPosition(map.getCenter());
       	const roomName = JSON.parse(document.getElementById('room-name').textContent);
-      	const playSocket = new WebSocket(
+      	playSocket = new WebSocket(
                 'ws://'
                 + window.location.host
                 + '/ws/chat/'
@@ -484,19 +489,21 @@
       
       function gameEnded(){
           //resize map pour la reduire
+          var res = " ";
 
-          console.log("game over");
-          var go = document.createElement("textarea");
-          go.value = "Game Over !";
-          var txt = document.createElement("textarea");
-          txt.value = "Winners : ";
-          console.log("winners :");
           for(let [u, r] of Object.entries(role)){
               if(r == winner){ 
-                txt.value += u;
+                res+=u + ",";
                 console.log(u);
               }
           }
+          alert("Winners: "+ res);
+          var msg ={
+          	'type' : "end.message",
+          	'list' : res
+          };
+          playSocket.send(JSON.stringify(msg));
+ 
       }
 
       
