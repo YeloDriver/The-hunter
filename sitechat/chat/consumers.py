@@ -213,7 +213,7 @@ class PlayConsumer(WebsocketConsumer):
             self.hunter.append(u.username)
         
         self.timestart = time.time()
-        self.gamelength = 1800 #réglable pour ajuster longueur partie, en s (1800=30min)
+        self.gamelength = 18 #réglable pour ajuster longueur partie, en s (1800=30min)
 
         self.room = Room.objects.add(self.room_group_name, self.channel_name, self.user)        #list all the users in the room and print them and send them to the group
         print("Status update")
@@ -287,7 +287,7 @@ class PlayConsumer(WebsocketConsumer):
             async_to_sync(self.channel_layer.group_send)(
                     self.room_group_name,
                     {
-                        'type': 'liste_message',
+                        'type': msg_type,
                     }   
             )  
 

@@ -38,7 +38,6 @@
       var userCircle;
       var gameOver = false;
       var winner = "none";      
-
       var selfUser = document.getElementById("self_user").value; 
 
       function initMap() {
@@ -305,14 +304,17 @@
         //Associate the styled map with the MapTypeId and set it to display.
         map.mapTypes.set('styled_map', styledMapType);
         map.setMapTypeId('styled_map');
-        
+        var lineSymbol = {
+              path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW
+	};
+
         infoWindow = new google.maps.InfoWindow;
         infoWindow.setPosition(map.getCenter());
       	const roomName = JSON.parse(document.getElementById('room-name').textContent);
       	const playSocket = new WebSocket(
-                'ws://'
+                'wss://'
                 + window.location.host
-                + '/ws/chat/'
+                + '/wss/chat/'
                 + roomName
                 + '/play/'
         );
@@ -322,7 +324,7 @@
             console.log(data);
             switch(data.type){
                 case "position.message":
-		                if (dead.indexOf(data.user)==-1) {
+		    if (dead.indexOf(data.user)==-1) {
                         var pos = new google.maps.LatLng(data.lat, data.lng);
                         variables[data.user].setPosition(pos);
                         variables[data.user].setMap(map);
@@ -331,6 +333,29 @@
                             map.setCenter(pos);
                             userCircle.setCenter(pos);
                         }
+			if (role[selfUser]== "hunter") {
+			    var min = 10000000000000;
+			    var d = 0;
+			    var closest;
+			    for (user in last_pos) {
+				    if (user != selfUser && role[user] != role[selfUser]){
+					    d = google.maps.geometry.spherical.computeDistanceBetween(last_pos[selfUser], last_pos[user]);
+					    if (min > d) {
+						    min = d;
+						    closest = user;
+					    }
+				    }
+			    }
+			    var arrowcoords = google.maps.geometry.spherical.interpolate(last_pos[selfUser], last_pos[closest], 0.1);
+			    var arrow = new google.maps.Polyline({
+				    path: [last_pos[selfUser], arrowcoords],
+				    icons: [{
+					    icon: lineSymbol,
+					    offset: '100%'
+				    }],
+				    map: map
+			    });
+			}
                         for (user in last_pos){
                             if (user != data.user && role[user] != role[data.user]){
                                 var distance = google.maps.geometry.spherical.computeDistanceBetween(pos, last_pos[user]);
@@ -356,14 +381,13 @@
                                     if (alive == false){
                                         gameOver = true;
                                         winner = "hunter";
-                                        gameEnded(winner);
+                                        gameEnded(winner, role);
                                     }
                                 }
                             }
                         }
                     }
                     break;
-
                 case "liste_message":
                     for (i in data.user) {
                         variables[data.user[i]] = new google.maps.Marker({
@@ -398,7 +422,7 @@
                     infoWindow.open(map);
                     gameOver = true;
                     winner = "hunted";
-                    gameEnded(winner);
+                    gameEnded(winner, role);
                     break;
             }
         }
@@ -448,7 +472,7 @@
         infoWindow.open(map);
       }
       
-      function gameEnded(team){
+      function gameEnded(team, role){
           //resize map pour la reduire
           var go = document.createElement("textarea");
           go.value = "Game Over !";
