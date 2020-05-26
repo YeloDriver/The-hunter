@@ -308,7 +308,7 @@
         var lineSymbol = {          //Arrow to hunted
               path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW
 	      };
-	      var arrow = new google.maps.Polyline({
+	    var arrow = new google.maps.Polyline({
 				    icons: [{
 					    icon: lineSymbol,
 					    offset: '100%'
@@ -345,63 +345,64 @@
             switch(data.type){
                 case "position.message":
 		                if (dead.indexOf(data.user)==-1) {
-                        var pos = new google.maps.LatLng(data.lat, data.lng);
-                        variables[data.user].setPosition(pos);
-			                  if (role[selfUser] == role[data.user]) {
-				                    variables[data.user].setMap(map);
-			                  }
-                        last_pos[data.user]= pos;
-                        if (data.user == selfUser){
-                            map.setCenter(pos);
-                            userCircle.setCenter(pos);
-                        }
-			                  if (role[selfUser]== "hunter") {
-			                      var min = 10000000000000;
-			                      var d = 0;
-			                      var closest;
-			                      for (user in last_pos) {
-				                        if (user != selfUser && role[user] != role[selfUser]){
-					                          d = google.maps.geometry.spherical.computeDistanceBetween(last_pos[selfUser], last_pos[user]);
-					                          if (min > d) {
-						                            min = d;
-						                            closest = user;
-					                          }
-				                        }
-			                      }
-			                      var arrowcoords = google.maps.geometry.spherical.interpolate(last_pos[selfUser], last_pos[closest], 0.1);
-			                      arrow.setPath([last_pos[selfUser], arrowcoords]);
-			                  }
-                        for (user in last_pos){
-                            if (user != data.user && role[user] != role[data.user] && dead.indexOf(user) == -1){
-                                var distance = google.maps.geometry.spherical.computeDistanceBetween(pos, last_pos[user]);
-                                if (distance < killDistance){                   //kill function
-                                    if(role[user]=="hunter"){
-					                              infoWindow.setPosition(pos);
-                                        infoWindow.setContent(data.user+" has been killed by" + user);
-                                        variables[data.user].setIcon(icon_dead);
-                                        dead.push(data.user);                               
-                                    }else{
-					                              infoWindow.setPosition(pos);
-                                        infoWindow.setContent(user+" has been killed by" + data.user);
-                                        variables[user].setIcon(icon_dead);
-                                        dead.push(user);
-                                    }
-                                    infoWindow.open(map);
-                                    alive = false;
-                                    for (u in role){                                //Check if all the hunted are dead
-                                      if(role[u]=="hunted" && dead.indexOf(u) == -1){
-                                          alive = true;
-                                      }
-                                    }
-                                    if (alive == false){
-                                        gameOver = true;
-                                        winner = "hunter";
-                                        gameEnded();
+                            var pos = new google.maps.LatLng(data.lat, data.lng);
+                            variables[data.user].setPosition(pos);
+                            if (role[selfUser] == role[data.user]) {
+                                variables[data.user].setMap(map);
+                            }
+                            last_pos[data.user]= pos;
+                            if (data.user == selfUser){
+                                map.setCenter(pos);
+                                userCircle.setCenter(pos);
+                            }
+			                if (role[selfUser]== "hunter") {
+                                var min = 10000000000000;
+			                    var d = 0;
+			                    var closest;
+			                    for (user in last_pos) {
+                                    if (user != selfUser && role[user] != role[selfUser] && dead.indexOf(user)==-1) {
+                                        d = google.maps.geometry.spherical.computeDistanceBetween(last_pos[selfUser], last_pos[user]);
+					                    if (min > d) {
+                                            min = d;
+                                            closest = user;
+					                    }
+				                    }
+			                    }
+			                    var arrowcoords = google.maps.geometry.spherical.interpolate(last_pos[selfUser], last_pos[closest], 0.1);
+			                    arrow.setPath([last_pos[selfUser], arrowcoords]);
+			                }
+                            for (user in last_pos){
+                                if (user != data.user && role[user] != role[data.user] && dead.indexOf(user) == -1){
+                                    var distance = google.maps.geometry.spherical.computeDistanceBetween(pos, last_pos[user]);
+                                    if (distance < killDistance){                   //kill function
+                                        if(role[user]=="hunter"){
+                                            infoWindow.setPosition(pos);
+                                            infoWindow.setContent(data.user+" has been killed by" + user);
+                                            variables[data.user].setIcon(icon_dead);
+                                            variables[data.user].setMap(map);
+                                            dead.push(data.user);                               
+                                        }else{
+                                            infoWindow.setPosition(pos);
+                                            infoWindow.setContent(user+" has been killed by" + data.user);
+                                            variables[user].setIcon(icon_dead);
+                                            dead.push(user);
+                                        }
+                                        infoWindow.open(map);
+                                        alive = false;
+                                        for (u in role){                                //Check if all the hunted are dead
+                                            if(role[u]=="hunted" && dead.indexOf(u) == -1){
+                                                alive = true;
+                                            }
+                                        }
+                                        if (alive == false){
+                                            gameOver = true;
+                                            winner = "hunter";
+                                            gameEnded();
+                                        }
                                     }
                                 }
                             }
                         }
-                    }
                     /*winner = "hunted";
                     gameEnded();*/
                     break;
