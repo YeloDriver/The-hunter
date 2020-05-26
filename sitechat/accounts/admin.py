@@ -109,7 +109,7 @@ class PlayRoomAdmin(admin.ModelAdmin):
     actions = ['download_csv']
     download_csv.short_description = "Download CSV file for selected stats."
 
-class EndAdmin(admin.modelAdmin):
+class EndAdmin(admin.ModelAdmin):
     # Functions
     def download_csv(self, request, queryset):        
         f = StringIO()
