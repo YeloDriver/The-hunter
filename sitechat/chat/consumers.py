@@ -5,7 +5,7 @@ from channels.generic.websocket import WebsocketConsumer
 from asgiref.sync import async_to_sync
 from django.contrib.auth.models import Group, User
 
-from channels_presence.models import Room 
+from channels_presence.models import Room , Presence
 
 from channels.layers import get_channel_layer
 from channels_presence.signals import presence_changed
@@ -63,6 +63,7 @@ class ChatConsumer(WebsocketConsumer):
     # Receive message from WebSocket
     def receive(self, text_data):
         #print("DEBUG : msg receive")
+        Presence.objects.touch(self.channel_name)
 
         text_data_json = json.loads(text_data)
         msg_type = text_data_json.get('type')
@@ -88,6 +89,8 @@ class ChatConsumer(WebsocketConsumer):
                     'user': msg_user
                 }
             )
+        if text_data == "heart_beat":
+            Presence.objects.touch(self.channel_name)
         #print("DEBUG : msg transmit au groupe")
 
 
@@ -215,7 +218,7 @@ class PlayConsumer(WebsocketConsumer):
         self.timestart = time.time()
         self.gamelength = 18 #réglable pour ajuster longueur partie, en s (1800=30min)
 
-        self.room = Room.objects.add(self.room_group_name, self.channel_name, self.user)        #list all the users in the room and print them and send them to the group
+        self.room = Room.objects.add("play"+self.room_group_name[4:], self.channel_name, self.user)        #list all the users in the room and print them and send them to the group
         print("Status update")
         num = 0
         userlist = []
@@ -229,6 +232,7 @@ class PlayConsumer(WebsocketConsumer):
 
     def disconnect(self, close_code):
         # Leave room group
+        Room.objects.remove("play"+self.room_group_name[4:], self.channel_name)
         async_to_sync(self.channel_layer.group_discard)(
             self.room_group_name,
             self.channel_name
@@ -237,6 +241,7 @@ class PlayConsumer(WebsocketConsumer):
     # Receive message from WebSocket
     def receive(self, text_data):
         print("DEBUG : msg receive")
+        Presence.objects.touch(self.channel_name)
         
         text_data_json = json.loads(text_data)
         msg_type = text_data_json.get('type')

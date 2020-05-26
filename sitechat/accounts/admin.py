@@ -2,9 +2,9 @@ from django.contrib import admin
 from chat.models import Game
 from django.contrib.auth.models import Group, User
 from channels_presence.models import Room
+from django.http import HttpResponse
 
-
-class InputFilter(admin.SimpleListFilter):
+class InputFilter(admin.SimpleListFilter): 
     template = 'admin/input_filter.html'
     def lookups(self, request, model_admin):
         # Dummy, required to show the filter.
@@ -37,9 +37,25 @@ class SessionFilter(InputFilter):
             return queryset.filter(session=self.value())
 
 class GameAdmin(admin.ModelAdmin):
+    def download_csv(self, request, queryset):
+        import csv
+        from io import StringIO
+
+        f = StringIO()
+        writer = csv.writer(f)
+        writer.writerow(['session','user','pos_lat','pos_lng','time',])
+        for s in queryset:
+            writer.writerow([s.session, s.user, s.pos_lat, s.pos_lng, s.time])        
+        f.seek(0)
+        response = HttpResponse(f, content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename=stat-info.csv'
+        return response
+    actions = ['download_csv']
+    download_csv.short_description = "Download CSV file for selected stats."
     list_display =('session','user','pos_lat','pos_lng','time',)
-    list_filter = (UserFilter, SessionFilter)
+    list_filter = (UserFilter, SessionFilter)    
     ordering = ('time','user',) 
+    
 
 
 admin.site.register(Room)

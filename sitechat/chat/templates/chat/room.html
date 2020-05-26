@@ -99,12 +99,14 @@
             }
 
             document.querySelector('#clean-button').onclick = function(e){
-		var msg = {
-			'type': "clean.message"
-		}
-		chatSocket.send(JSON.stringify(msg));
-	    }
-
+		    var msg = {
+			    'type': "clean.message"
+		    }
+		        chatSocket.send(JSON.stringify(msg));
+	        }
+            setInterval(function(){
+                socket.send(JSON.stringify("heart_beat"))
+            },30000);
         </script>
         
         <br>
