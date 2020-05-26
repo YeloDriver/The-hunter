@@ -17,6 +17,7 @@ channel_layer = get_channel_layer()
 
 class ChatConsumer(WebsocketConsumer):
     def connect(self):
+        Room.objects.prune_presences()
         #print("DEBUG : connection")
         self.room_name = self.scope['url_route']['kwargs']['room_name']
         self.room_group_name = 'chat_%s' % self.room_name
@@ -70,6 +71,7 @@ class ChatConsumer(WebsocketConsumer):
     # Receive message from WebSocket
     def receive(self, text_data):
         #print("DEBUG : msg receive")
+        Room.objects.prune_presences()
         Presence.objects.touch(self.channel_name)
 
         text_data_json = json.loads(text_data)
@@ -97,7 +99,6 @@ class ChatConsumer(WebsocketConsumer):
                 }
             )
         if msg_type == "heart_beat":
-            print("dcmm")
             Presence.objects.touch(self.channel_name)
         #print("DEBUG : msg transmit au groupe")
         
@@ -217,9 +218,8 @@ class PlayConsumer(WebsocketConsumer):
             if (r.room_name == self.room_group_name[5:]) and (r.room_url == "https://127.0.0.1/chat/" + self.room_group_name[5:] +"/play"):
                 create = False
         if create == True:
-            room_model = PlayRoom(room_name = self.room_group_name[5:],room_url ="https://127.0.0.1/chat/"+self.room_group_name[5:] +'/play')
+            room_model = PlayRoom(room_name = self.room_group_name[5:],room_url ="https://127.0.0.1/chat/" + self.room_group_name[5:] +'/play')
             room_model.save()
-
          
         # Join room group
         async_to_sync(self.channel_layer.group_add)(

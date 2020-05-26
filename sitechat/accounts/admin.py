@@ -58,6 +58,13 @@ class GameAdmin(admin.ModelAdmin):
     
 class ChatRoomAdmin(admin.ModelAdmin):
     list_display = ('room_name','room_url',)
+    def clean(self,request,queryset):
+    	for room in ChatRoom.objects.all():
+    	    room.delete()
+    	for room in Room.objects.all():
+    	    new = ChatRoom(room_name = room.channel_name[5:] ,room_url ="https://127.0.0.1:8000/chat/" + room.channel_name[5:])
+    	    new.save()
+    actions = ['clean']
 
 class PlayRoomAdmin(admin.ModelAdmin):
     list_display = ('room_name','room_url',)

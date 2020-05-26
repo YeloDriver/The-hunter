@@ -10,8 +10,8 @@ class Game(models.Model):
 
 class ChatRoom(models.Model):
     room_name = models.CharField(max_length = 30)
-    room_url = models.CharField(max_length = 30)
+    room_url = models.CharField(max_length = 50)
 
 class PlayRoom(models.Model):
     room_name = models.CharField(max_length = 30)
-    room_url = models.CharField(max_length = 30)
+    room_url = models.CharField(max_length = 50)
