@@ -40,7 +40,6 @@ class GameAdmin(admin.ModelAdmin):
     def download_csv(self, request, queryset):
         import csv
         from io import StringIO
-
         f = StringIO()
         writer = csv.writer(f)
         writer.writerow(['session','user','pos_lat','pos_lng','time',])
@@ -48,29 +47,61 @@ class GameAdmin(admin.ModelAdmin):
             writer.writerow([s.session, s.user, s.pos_lat, s.pos_lng, s.time])        
         f.seek(0)
         response = HttpResponse(f, content_type='text/csv')
-        response['Content-Disposition'] = 'attachment; filename=stat-info.csv'
+        response['Content-Disposition'] = 'attachment; filename=output.csv'
         return response
     actions = ['download_csv']
-    download_csv.short_description = "Download CSV file for selected stats."
+    download_csv.short_description = "Export Selected as CSV"
     list_display =('session','user','pos_lat','pos_lng','time',)
     list_filter = (UserFilter, SessionFilter)    
     ordering = ('time','user',) 
     
 class ChatRoomAdmin(admin.ModelAdmin):
+    def download_csv(self, request, queryset):
+        import csv
+        from io import StringIO
+        f = StringIO()
+        writer = csv.writer(f)
+        writer.writerow(['room_name','room_url',])
+        for s in queryset:
+            writer.writerow([s.room_name, s.room_url])        
+        f.seek(0)
+        response = HttpResponse(f, content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename=output.csv'
+        return response
+    actions = ['download_csv']
+    download_csv.short_description = "Export Selected as CSV"
     list_display = ('room_name','room_url',)
 
 class PlayRoomAdmin(admin.ModelAdmin):
+    def download_csv(self, request, queryset):
+        import csv
+        from io import StringIO
+        f = StringIO()
+        writer = csv.writer(f)
+        writer.writerow(['room_name','room_url',])
+        for s in queryset:
+            writer.writerow([s.room_name, s.room_url])        
+        f.seek(0)
+        response = HttpResponse(f, content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename=output.csv'
+        return response
+    actions = ['download_csv']
+    download_csv.short_description = "Export Selected as CSV"
     list_display = ('room_name','room_url',)
 
-admin.site.register(Room)
-admin.site.register(ChatRoom,ChatRoomAdmin)
-admin.site.register(PlayRoom,PlayRoomAdmin)
-admin.site.register(Game,GameAdmin)
-
+admin.site.site_header = 'Admin Page'
+admin.site.index_title = 'Management'
 admin.site.unregister(Group)
 
-admin.site.site_header = 'Admin Page'
+# Models
+
+# admin.site.register(Room) # Useless
+admin.site.register(ChatRoom,ChatRoomAdmin)
+admin.site.register(PlayRoom,PlayRoomAdmin) # Essentially duplicate as 1 chat room = 1 play room
+admin.site.register(Game,GameAdmin) # No data so far?
 
 
 
-# Register your models here.
+
+
+
