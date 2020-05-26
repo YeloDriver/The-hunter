@@ -5,31 +5,45 @@
     <meta charset="utf-8"/>
     <title>Chat Room</title>
     <style>
+        body{
+            background: url("theme1.jpg")no-repeat ;
+        }
         .intext{
             margin-top: 15px;
+            margin-bottom: 15px;
+        }
+        .chat{
+            overflow: auto;
+        }
+        .teamfunc{
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
     {% if user.is_authenticated %}
-    <div>
+    <div class="chat">
         <textarea id="chat-log" cols="100" rows="20"></textarea><br>
+    </div>
+    
+    <div class="intext">
+        <section>
+            <input id="chat-message-input" type="text" size="100"><br>
+            <input id="chat-message-submit" type="button" value="Send">
+        </section>
     </div>
     <div>
         <textarea id="Hunter" cols="20" rows="5"></textarea>
-        <input id="hunter-button" type="button" value="Join" class="join">
-        <br>
-        <textarea id="Hunted" cols="20" rows="5"></textarea>
-        <input id="hunted-button" type="button" value="Join" class="join">
-        <br>
+        <input id="hunter-button" type="button" value="Join the hunter">
     </div>
-    <div class="intext">
-        <input id="chat-message-input" type="text" size="100"><br>
-        <input id="chat-message-submit" type="button" value="Send">
-	      
+    <div>
+        <textarea id="Hunted" cols="20" rows="5"></textarea>
+        <input id="hunted-button" type="button" value="Join the hunted">
+    </div>
+    <div class="teamfunc">
+            <input id="start-button" type="button" value="Start the game">
+            <input id="clear-button" type="button" value="Clear teams">
         
-        <input id="start-button" type="button" value="Start the game">
-        <input id="clear-button" type="button" value="Clear teams">
     </div>
 
         {{ room_name|json_script:"room-name" }}
