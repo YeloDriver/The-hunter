@@ -3,12 +3,12 @@ body
     background:  url("theme1.jpg") no-repeat center center fixed ;
     background-size: cover;
     min-height: 90vh;  
-    overflow: hidden;
+    overflow: auto;
     text-align: center;
     
 }
 
-#chat-log {
+textarea{
     opacity: 0.4;
 }
 
@@ -16,11 +16,8 @@ body
     opacity: 0.5;
 }
 
-#Hunter {
-    opacity: 0.4;
-}
-#Hunted {
-    opacity: 0.4;
+#hunter-button{
+    margin-right: 3em;
 }
 p {
     text-align: center;
@@ -30,5 +27,11 @@ p {
 #choix {
     display: flex;
     position: relative;
-    margin-left: 50vh;
+    margin-left: 32vw;
+}
+#Huer{
+    margin-left: -3em;
+}
+#Hued{
+    margin-left: -2em;
 }
