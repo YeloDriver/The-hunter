@@ -6,8 +6,7 @@
 
 <html>
 
-    
-    {% if   request.user_agent.is_mobile  %}
+      {% if  request.user_agent.is_mobile   %}
     <head>
     <link rel="stylesheet"  href="{% static '/stylemobile.css' %}">
   
@@ -47,38 +46,6 @@
           </nav>
          
         </div>
-        <div class="mainapge">
-          <section class = "hunterOrHunted" >
-      <h3>Be Hunter or Hunted</h3>
-      <p> 
-        <span>
-          You are an expert in camouflage ? You know every secret place in your city? Be hunted and help you teamate to escpape the hunter <br>
-          If you are a trapper, able to detect your prey miles away and a good shooter, Hunter will be your future.
-        </span> 
-      </p>
-          </section>
-     
-          <section class = "Friends">
-      <h3>Play with your friends</h3>
-      <p> 
-        <span>
-          In the hunter you can create a lobby, inviting your friends in your game, and prepare yourself for a long and hectic hunt.
-        </span> 
-      </p>
-        </section>
-          
-          <section class = "Besta">
-      <h3>Join other player in your city</h3>
-      <p> 
-        <span>
-          Ready to hide from the best hunter of your city? Wanting to catch the most unattainabler prey? 
-          In the hunter, you can joing a lobby and fight other players in your city.
-        </span>
-      </p>
-          </section>
-         
-          
-      </div>
     </body>
     
     
@@ -90,7 +57,6 @@
     
     {% else%}
     
-
   <head>
     <link rel="stylesheet"  href="{% static '/style.css' %}">
   
@@ -110,12 +76,14 @@
            <nav>
             <ul id="menu">
             {% if user.is_authenticated %}
-                Hi {{ user.username }} <br>
+                <p class ="nom"> Hi {{ user.username }} </p> <br>
             
-                <li><a href="http://127.0.0.1:8000/chat"> <p class ="intro">Join a lobby</p></a></li>
+                <li><a href="http://127.0.0.1:8000/chat"> <p class ="intro">Join a loby</p></a></li>
                
                 
                 <li><a href="http://127.0.0.1:8000/accounts/logout"><p class ="intro">logout</p></a></li>
+               
+         
                 
             {% else %}
                 
@@ -152,21 +120,11 @@
          
           
       </div>
-      <a href="#">back to top</a>
       
       
-      
-<!--   
-      
-    {% if request.user_agent.is_mobile   %}
-      bonjour utilisateur mobile<br>
+        <a href="#">back to top</a>
   
-    
-     {% else%}
-     <p>bonjour utilisateur web</p> <br>
-    {% endif %}
-    
--->
+
   </body>
-      {% endif %}
+        {% endif %}
 </html>
