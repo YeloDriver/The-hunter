@@ -15,3 +15,6 @@ class ChatRoom(models.Model):
 class PlayRoom(models.Model):
     room_name = models.CharField(max_length = 30)
     room_url = models.CharField(max_length = 50)
+class End(models.Model):
+    winner = models.CharField(max_length = 50)
+    session = models.CharField(max_length = 30) # nom de chatroom
