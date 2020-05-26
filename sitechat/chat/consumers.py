@@ -192,16 +192,17 @@ class ChatConsumer(WebsocketConsumer):
             'type': msg_type,
         }))
 
-    def clean_message(self, event):
+    def clear_message(self, event):
         msg_type = event['type']
         userObject = self.scope['user']
 
         grp_hunter = Group.objects.get(name='hunter_'+self.room_name)
         grp_hunted = Group.objects.get(name='hunted_'+self.room_name)
-        if userObject.groups.filter(name="hunter_"+self.room_name):
-            userObject.groups.remove(grp_hunter)
-        elif userObject.groups.filter(name="hunted_"+self.room_name):
-            userObject.groups.remove(grp_hunted)
+        
+        for user in User.objects.all():
+            user.groups.remove(grp_hunter)
+            user.groups.remove(grp_hunted)
+            
         self.send(text_data=json.dumps({
             'type': msg_type,
         }))
