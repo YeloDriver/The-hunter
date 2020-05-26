@@ -6,6 +6,58 @@
 
 <html>
 
+    
+    {% if   request.user_agent.is_mobile  %}
+    <head>
+    <link rel="stylesheet"  href="{% static '/stylemobile.css' %}">
+  
+      
+    <meta charset="utf-8/">
+   
+    <title> The hunt </title>
+      
+  </head>
+    
+    <body>
+     <div id="topsection">
+          <header>
+            <h1>The Hunt</h1>
+            
+          </header>
+         
+          <nav>
+            <ul id="menu">
+            {% if user.is_authenticated %}
+                <p class ="nom"> Hi {{ user.username }} </p> <br>
+            <br>
+                <li><a href="http://127.0.0.1:8000/chat"> <p class ="intro">Join a loby</p></a></li>
+               
+                <br>
+                <li><a href="http://127.0.0.1:8000/accounts/logout"><p class ="intro">logout</p></a></li>
+               
+        
+            {% else %}
+                <br>
+                <li><a href="http://127.0.0.1:8000/accounts/login"><p class ="intro">login</p></a></li>
+             <br>
+               <li><a href="http://127.0.0.1:8000/accounts/register"><p class ="intro">register</p></a></li>
+               
+            {% endif %}
+            </ul>
+          </nav>
+         
+        </div>
+    </body>
+    
+    
+    
+    
+    
+    
+    
+    
+    {% else%}
+    
 
   <head>
     <link rel="stylesheet"  href="{% static '/style.css' %}">
@@ -84,4 +136,5 @@
     
 -->
   </body>
+      {% endif %}
 </html>
