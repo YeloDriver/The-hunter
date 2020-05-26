@@ -106,6 +106,7 @@ class PlayRoomAdmin(admin.ModelAdmin):
     
     # Elements
     list_display = ('room_name','room_url',)
+
     actions = ['download_csv']
     download_csv.short_description = "Download CSV file for selected stats."
 
@@ -114,7 +115,7 @@ class EndAdmin(admin.ModelAdmin):
     def download_csv(self, request, queryset):        
         f = StringIO()
         writer = csv.writer(f)
-        writer.writerow(['winner','session','pos_lat','pos_lng','time',])
+        writer.writerow(['winner','session'])
         for s in queryset:
             writer.writerow([s.winner, s.session])        
         f.seek(0)

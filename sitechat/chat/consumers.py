@@ -268,7 +268,7 @@ class PlayConsumer(WebsocketConsumer):
         msg_type = text_data_json.get('type')
         msg_user = self.scope["user"].username
         
-        print("DEBUG : msg receive "+msg_type)
+        print("DEBUG : msg receive "+msg_type+" from : "+msg_user)
 
         if time.time() - self.timestart > self.gamelength:
             msg_type = 'timeout.message'
