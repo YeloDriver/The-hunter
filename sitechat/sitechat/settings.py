@@ -27,7 +27,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
         '127.0.0.1',
-        'c62be492.ngrok.io']
+        'c62be492.ngrok.io',
+        '754a9430.ngrok.io'     
+        ]
 
 
 # Application definition
@@ -132,6 +134,8 @@ CHANNEL_LAYERS = {
             'BACKEND': 'channels_redis.core.RedisChannelLayer',
             'CONFIG': {
                 "hosts":[('127.0.0.1', 6379)],
+                'capacity': 2000,
+                'expiry': 10,
             },
         },
 }
