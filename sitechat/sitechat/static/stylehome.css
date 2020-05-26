@@ -1,0 +1,34 @@
+body
+{
+    background:  url("theme1.jpg") no-repeat center center fixed ;
+    background-size: cover;
+    min-height: 90vh;  
+    overflow: hidden;
+    text-align: center;
+    
+}
+
+#chat-log {
+    opacity: 0.4;
+}
+
+#chat-message-input {
+    opacity: 0.5;
+}
+
+#Hunter {
+    opacity: 0.4;
+}
+#Hunted {
+    opacity: 0.4;
+}
+p {
+    text-align: center;
+    color:black;
+    font-size: 20px;
+}
+#choix {
+    display: flex;
+    position: relative;
+    margin-left: 50vh;
+}
