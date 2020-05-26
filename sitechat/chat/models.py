@@ -7,3 +7,11 @@ class Game(models.Model):
     pos_lat = models.FloatField()
     time = models.FloatField()
     team = models.CharField(max_length = 30)
+
+class ChatRoom(models.Model):
+    room_name = models.CharField(max_length = 30)
+    room_url = models.CharField(max_length = 30)
+
+class PlayRoom(models.Model):
+    room_name = models.CharField(max_length = 30)
+    room_url = models.CharField(max_length = 30)

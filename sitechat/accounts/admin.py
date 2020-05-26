@@ -1,5 +1,5 @@
 from django.contrib import admin
-from chat.models import Game
+from chat.models import Game,ChatRoom,PlayRoom
 from django.contrib.auth.models import Group, User
 from channels_presence.models import Room
 from django.http import HttpResponse
@@ -56,9 +56,15 @@ class GameAdmin(admin.ModelAdmin):
     list_filter = (UserFilter, SessionFilter)    
     ordering = ('time','user',) 
     
+class ChatRoomAdmin(admin.ModelAdmin):
+    list_display = ('room_name','room_url',)
 
+class PlayRoomAdmin(admin.ModelAdmin):
+    list_display = ('room_name','room_url',)
 
 admin.site.register(Room)
+admin.site.register(ChatRoom,ChatRoomAdmin)
+admin.site.register(PlayRoom,PlayRoomAdmin)
 admin.site.register(Game,GameAdmin)
 
 admin.site.unregister(Group)

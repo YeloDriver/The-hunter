@@ -3,6 +3,7 @@ from django.shortcuts import render
 from channels_presence.models import Room 
 
 def rooms(request):
+    Room.objects.prune_presences()
     rooms_name=""
     for rooms in Room.objects.all():
             print(rooms.channel_name[5:])

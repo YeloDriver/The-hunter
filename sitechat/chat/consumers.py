@@ -10,7 +10,7 @@ from channels_presence.models import Room , Presence
 from channels.layers import get_channel_layer
 from channels_presence.signals import presence_changed
 
-from chat.models import Game
+from chat.models import Game,ChatRoom,PlayRoom
 
 
 channel_layer = get_channel_layer()
@@ -22,6 +22,13 @@ class ChatConsumer(WebsocketConsumer):
         self.room_group_name = 'chat_%s' % self.room_name
         self.user = self.scope["user"]
         grp_room = Group.objects.get(name='room_'+self.room_name)
+        create = True
+        for r in ChatRoom.objects.all():
+            if (r.room_name == self.room_group_name[5:]) and (r.room_url =="https://127.0.0.1/chat/"+self.room_group_name[5:] ):
+                create = False
+        if create == True:
+            room_model = ChatRoom(room_name = self.room_group_name[5:],room_url ="https://127.0.0.1/chat/"+self.room_group_name[5:] )
+            room_model.save()
 
         self.user.groups.add(grp_room)
          
@@ -199,6 +206,15 @@ class PlayConsumer(WebsocketConsumer):
         self.room_name = self.scope['url_route']['kwargs']['room_name']
         self.room_group_name = 'chat_%s' % self.room_name
         self.user = self.scope["user"]
+        
+        create = True
+        for r in PlayRoom.objects.all():
+            if (r.room_name == self.room_group_name[5:]) and (r.room_url == "https://127.0.0.1/chat/" + self.room_group_name[5:] +"/play"):
+                create = False
+        if create == True:
+            room_model = PlayRoom(room_name = self.room_group_name[5:],room_url ="https://127.0.0.1/chat/"+self.room_group_name[5:] +'/play')
+            room_model.save()
+
          
         # Join room group
         async_to_sync(self.channel_layer.group_add)(
@@ -253,12 +269,12 @@ class PlayConsumer(WebsocketConsumer):
         if msg_type == 'position.message':
             msg_lat = text_data_json.get('lat')
             msg_lng = text_data_json.get('lng')
-            """if msg_user in self.hunter:
+            '''if msg_user in self.hunter:
                 game_data = Game(session = self.room_name, user = msg_user, pos_lat = msg_lat, pos_lng = msg_lng, time = time.time(),team = "hunter")
                 game_data.save()
             else:
                 game_data = Game(session = self.room_name, user = msg_user, pos_lat = msg_lat, pos_lng = msg_lng, time = time.time(),team = "hunted")
-                game_data.save()"""
+                game_data.save()'''
 		    
             async_to_sync(self.channel_layer.group_send)(
                 self.room_group_name,
