@@ -307,6 +307,13 @@
         var lineSymbol = {
               path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW
 	};
+	var arrow = new google.maps.Polyline({
+				    icons: [{
+					    icon: lineSymbol,
+					    offset: '100%'
+				    }],
+				    map: map
+	});
 
         infoWindow = new google.maps.InfoWindow;
         infoWindow.setPosition(map.getCenter());
@@ -327,7 +334,9 @@
 		    if (dead.indexOf(data.user)==-1) {
                         var pos = new google.maps.LatLng(data.lat, data.lng);
                         variables[data.user].setPosition(pos);
-                        variables[data.user].setMap(map);
+			if (role[selfUser] == role[data.user]) {
+				variables[data.user].setMap(map);
+			}
                         last_pos[data.user]= pos;
                         if (data.user == selfUser){
                             map.setCenter(pos);
@@ -347,14 +356,7 @@
 				    }
 			    }
 			    var arrowcoords = google.maps.geometry.spherical.interpolate(last_pos[selfUser], last_pos[closest], 0.1);
-			    var arrow = new google.maps.Polyline({
-				    path: [last_pos[selfUser], arrowcoords],
-				    icons: [{
-					    icon: lineSymbol,
-					    offset: '100%'
-				    }],
-				    map: map
-			    });
+			    arrow.setPath([last_pos[selfUser], arrowcoords]);
 			}
                         for (user in last_pos){
                             if (user != data.user && role[user] != role[data.user]){
