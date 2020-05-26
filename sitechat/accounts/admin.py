@@ -106,6 +106,7 @@ class PlayRoomAdmin(admin.ModelAdmin):
     
     # Elements
     list_display = ('room_name','room_url',)
+
     actions = ['download_csv']
     download_csv.short_description = "Download CSV file for selected stats."
 
