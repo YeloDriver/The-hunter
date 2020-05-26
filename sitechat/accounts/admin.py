@@ -1,5 +1,5 @@
 from django.contrib import admin
-from chat.models import Game,ChatRoom,PlayRoom
+from chat.models import Game,ChatRoom,PlayRoom,End
 from django.contrib.auth.models import Group, User
 from channels_presence.models import Room
 from django.http import HttpResponse
@@ -68,8 +68,11 @@ class ChatRoomAdmin(admin.ModelAdmin):
 
 class PlayRoomAdmin(admin.ModelAdmin):
     list_display = ('room_name','room_url',)
+class EndAdmin(admin.modelAdmin):
+    list_display = ('winner','session',)
 
 admin.site.register(Room)
+admin.site.register(End,EndAdmin)
 admin.site.register(ChatRoom,ChatRoomAdmin)
 admin.site.register(PlayRoom,PlayRoomAdmin)
 admin.site.register(Game,GameAdmin)

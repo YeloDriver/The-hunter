@@ -7,14 +7,30 @@
     <link rel="stylesheet"  href="{% static '/stylehome.css' %}">
     <title>Chat Room</title>
     <style>
+        body{
+            background: url("theme1.jpg") no-repeat;
+            background-size: cover;
+        }
+        textarea{
+            background-color: rgba(30, 30, 30, 0.5);
+            color: white;
+        }
         .intext{
             margin-top: 15px;
+            margin-bottom: 15px;
+        }
+        .chat{
+            overflow: auto;
+        }
+        .teamfunc{
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
     <h1>The Hunt</h1>
     {% if user.is_authenticated %}
+<<<<<<< HEAD
     
     <div id="choix">
         <div id="hunter">
@@ -36,14 +52,30 @@
         <div id ="chat">
             <h2> Chat: </h2>
          <textarea id="chat-log" cols="75" rows="15"></textarea><br>
+=======
+    <div class="chat">
+        <textarea id="chat-log" cols="100" rows="20" readonly></textarea><br>
     </div>
+    
     <div class="intext">
-        <input id="chat-message-input" type="text" size="100"><br>
-        <input id="chat-message-submit" type="button" value="Send">
-	      
+        <section>
+            <input id="chat-message-input" type="text" size="100"><br>
+            <input id="chat-message-submit" type="button" value="Send">
+        </section>
+    </div>
+    <div>
+        <textarea id="Hunter" cols="20" rows="5" readonly></textarea>
+        <input id="hunter-button" type="button" value="Join the hunter">
+    </div>
+    <div>
+        <textarea id="Hunted" cols="20" rows="5" readonly></textarea>
+        <input id="hunted-button" type="button" value="Join the hunted">
+>>>>>>> 9080eee7ef5b1afa7fcfd94bc67d56c7ecf89ebd
+    </div>
+    <div class="teamfunc">
+            <input id="start-button" type="button" value="Start the game">
+            <input id="clear-button" type="button" value="Clear teams">
         
-        <input id="start-button" type="button" value="Start the game">
-        <input id="clear-button" type="button" value="Clear teams">
     </div>
 
         {{ room_name|json_script:"room-name" }}
