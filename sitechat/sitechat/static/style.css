@@ -14,8 +14,7 @@
 
 body { margin:0; }
 
-.hunterOrHunted {  
-    margin-top: 100px;
+.hunterOrHunted { 
     background:  url("theme1.jpg") no-repeat center center fixed ;
     background-size: cover;
     min-height: 90vh;  
