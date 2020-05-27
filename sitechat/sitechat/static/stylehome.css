@@ -10,6 +10,8 @@ body
 
 textarea{
     opacity: 0.4;
+    box-shadow: 10px 10px 10px 0.3;
+    border-radius: 1em;
 }
 
 #chat-message-input {
@@ -30,8 +32,14 @@ p {
     margin-left: 32vw;
 }
 #Huer{
-    margin-left: -3em;
+    margin-left: -4.5em;
 }
 #Hued{
-    margin-left: -2em;
+    margin-left: -2.5em;
+}
+.intext{
+    margin-top: 1.5em;
+}
+.join{
+    margin-left: 0.5em;
 }
