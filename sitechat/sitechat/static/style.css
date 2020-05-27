@@ -1,5 +1,6 @@
 
 #topsection {
+    margin-top: 0;
     display: flex;
     position: fixed;
     min-height: 20px;
