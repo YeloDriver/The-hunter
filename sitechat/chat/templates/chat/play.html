@@ -1,5 +1,6 @@
 <!-- templates/home.html -->
 <!DOCTYPE html>
+{% load static %}
 <html>
   <head>
     <title>Geolocation</title>
@@ -27,9 +28,9 @@
     <script>
  
       var map, infoWindow;
-      var icon_fusil = 'http://icons.iconarchive.com/icons/iconsmind/outline/48/Gun-icon.png';
-      var icon_target = 'http://icons.iconarchive.com/icons/iconsmind/outline/48/Target-icon.png';
-      var icon_dead = 'http://icons.iconarchive.com/icons/icons8/windows-8/48/Healthcare-Skull-icon.png';
+      var icon_fusil = '{% static "/Gun-icon.png" %}';
+      var icon_target = '{% static "/Target-icon.png" %}';
+      var icon_dead = '{% static "/Healthcare-Skull-icon.png" %}';
       var last_pos = {};
       var variables = {};
       var role = {};
