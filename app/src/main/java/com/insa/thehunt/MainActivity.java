@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        mWebView.loadUrl("https://ec6a3a58.ngrok.io");
+        mWebView.loadUrl("https://4c9e98da.ngrok.io/");
         //mWebView.loadUrl("https://www.google.fr/maps/preview");
     }
 
